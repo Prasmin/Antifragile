@@ -3,17 +3,16 @@ name = "server"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "Prashmin Gurung",email = "prashmingrg@gmail.com"}
+    {name = "Prashmin Gurung", email = "prashmingrg@gmail.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "sqlmodel (>=0.0.27,<0.0.28)"
+    "sqlmodel >=0.0.27,<0.0.28",
+    "python-dotenv >=1.2.1,<2.0.0",
+    "fastapi (>=0.121.2,<0.122.0)",
+    "uvicorn (>=0.38.0,<0.39.0)"
 ]
-
-[tool.poetry]
-packages = [{include = "server", from = "src"}]
-
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
