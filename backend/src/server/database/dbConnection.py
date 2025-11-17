@@ -11,6 +11,5 @@ url_object = URL.create(
     database=os.getenv("POSTGRES_DB"),
 )
 
-engine = create_engine(url_object)
+engine = create_engine(url_object, echo=True)
 
-# Usual SQLModel usage below...
