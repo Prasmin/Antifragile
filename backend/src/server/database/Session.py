@@ -1,8 +1,9 @@
 from typing import Annotated
+
 from fastapi import Depends
 from sqlmodel import Session, SQLModel
 from .dbConnection import engine
-from server.models import User  # Example model import
+ # Example model import
 
 def get_session():
     with Session(engine) as session:
