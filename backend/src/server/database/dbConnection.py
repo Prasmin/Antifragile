@@ -31,14 +31,3 @@ try:
 except Exception as e:
     print(f"❌ Database connection failed: {e}")
 
-
-def init_db():
-    """
-    Create all tables. Call this once on app startup.
-    """
-    try:
-        SQLModel.metadata.create_all(engine)
-        print("✅ Database tables created/verified")
-    except Exception as e:
-        print(f"❌ Failed to create tables: {e}", file=sys.stderr)
-        raise

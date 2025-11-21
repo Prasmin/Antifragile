@@ -10,7 +10,7 @@ def get_session():
         yield session
 
 
-# Shortcut for routes
+# Shortcut for routes    
 SessionDep = Annotated[Session, Depends(get_session)]
 
 # What this does:
@@ -21,5 +21,4 @@ SessionDep = Annotated[Session, Depends(get_session)]
 # 📌 This function provides a fresh, safe database connection to each request.
 
 
-def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
+

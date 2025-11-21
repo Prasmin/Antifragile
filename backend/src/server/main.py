@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from sqlmodel import SQLModel
 import sys
+from .api import users
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -27,20 +28,11 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+# Register routers
+app.include_router(users.router)
 
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
 
 
-@app.get("/health")
-async def health_check():
-    """
-    Health check endpoint to verify DB connection
-    """
-    try:
-        from .database.dbConnection import engine
-        with engine.connect() as conn:
-            return {"status": "healthy", "database": "connected"}
-    except Exception as e:
-        return {"status": "unhealthy", "error": str(e)}
