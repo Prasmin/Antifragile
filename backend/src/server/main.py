@@ -10,6 +10,19 @@ from .database.Session import SessionDep
 
 app = FastAPI()
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # STARTUP
+    print("🚀 Creating database tables...")
+    SQLModel.metadata.create_all(engine)
+    print("✅ Tables created!")
+    yield
+    # SHUTDOWN
+    print("👋 Shutting down...")
+    engine.dispose()
+
+app = FastAPI(lifespan=lifespan)
+
 @app.get("/")
 def root():
     """Root endpoint"""
@@ -24,8 +37,7 @@ def health_check():
 def database_health(session: SessionDep):
     """Check if database connection is working"""
     try:
-        # Create all tables
-      
+       
         
         # Test connection - get count of users
         result = session.exec(select(User)).all()
