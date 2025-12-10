@@ -1,13 +1,21 @@
-
-from sqlmodel import Session, select
-from ..models.User import User
+from sqlmodel import  select
+from ..models.User import UserCreate, User
 from ..database.Session import SessionDep
+from ..core.security import hash_password
 
 
-async def create_user(user: User, session: SessionDep):
+async def create_user(user: UserCreate, session: SessionDep):
     """Create a new user"""
-    db_user = User.model_validate(user)
+    # ...existing code...
+    hashed = hash_password(user.password)
+    db_user = User(
+        username=user.username,
+        email=user.email,
+        hashed_password=hashed,
+    )
     session.add(db_user)
     session.commit()
     session.refresh(db_user)
-    return db_user  
+    print(db_user)
+    return db_user
+
