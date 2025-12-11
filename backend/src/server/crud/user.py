@@ -1,6 +1,6 @@
 from sqlmodel import  select
 from ..models.User import UserCreate, User
-from ..database.Session import SessionDep
+from ..database.Session import SessionDep, get_session
 from ..core.security import hash_password
 
 
@@ -16,6 +16,7 @@ async def create_user(user: UserCreate, session: SessionDep):
     session.add(db_user)
     session.commit()
     session.refresh(db_user)
-    print(db_user)
+   
     return db_user
+
 
