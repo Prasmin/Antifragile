@@ -3,11 +3,13 @@ from fastapi import FastAPI
 from sqlmodel import SQLModel, Session, select
 from sqlalchemy import text
 from datetime import datetime
+from authlib.integrations.starlette_client import OAuth
 
 from .models.User import User
 from .database.config import engine
 from .database.Session import SessionDep
 
+oauth = OAuth()
 app = FastAPI()
 
 @asynccontextmanager
