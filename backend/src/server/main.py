@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from server.api.google_auth import router as google_auth_router
-from server.api.Singup import router as signup_router
+
 from server.api.users import router as users_router
 import os
 
@@ -29,9 +28,8 @@ app.add_middleware(
 
 
 # Include routers
-app.include_router(google_auth_router)
-app.include_router(signup_router)
 app.include_router(users_router)
+
 
 
 @app.get("/")
