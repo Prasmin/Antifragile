@@ -1,4 +1,5 @@
-from supabase import create_client, Client
+
+from supabase import create_async_client, AsyncClient
 import os
 import dotenv
 
@@ -11,18 +12,12 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 
-# Backing singleton reference
-_supabase_client: Client | None = None
+_supabase_client: AsyncClient | None = None
 
-
-
-
-def get_supabase_client() -> Client:
-    """Get Supabase client instance (singleton to preserve PKCE state)."""
+async def get_supabase_client() -> AsyncClient:
     if not SUPABASE_URL or not SUPABASE_KEY:
-        raise ValueError("Missing SUPABASE_URL or SUPABASE_KEY in environment")
-    
+        raise EnvironmentError("Supabase URL or Key not set in environment variables.")
     global _supabase_client
     if _supabase_client is None:
-        _supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
+        _supabase_client = await create_async_client(SUPABASE_URL, SUPABASE_KEY)
     return _supabase_client
