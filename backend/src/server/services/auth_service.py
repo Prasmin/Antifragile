@@ -5,6 +5,8 @@ import inspect
 from typing import Any
 
 from supabase import AsyncClient
+from supabase_auth import CodeExchangeParams
+from server.core.supabase_client import get_supabase_client
 
 class AuthService:
     def __init__(self, client: AsyncClient):
@@ -33,17 +35,29 @@ class AuthService:
 
         return {"auth_url": auth_url}
 
-    async def handle_oauth_callback(self, provider: str, code: str, redirect_url: str) -> dict[str, Any]:
-        """Handle OAuth callback - let Supabase handle PKCE code exchange"""
+    async def handle_oauth_callback(
+        self, provider: str, code: str, redirect_url: str, code_verifier: str
+    ) -> dict[str, Any]:
+        """Handle OAuth callback - exchange auth code for session (PKCE requires code_verifier)."""
         provider_normalized = provider.strip().lower()
         if provider_normalized != "google":
             raise ValueError(f"Unsupported provider: {provider}")
-        try:    
-               code_exchange_params = {"auth_code": code, "redirect_to": redirect_url}
 
-            auth_response = self.client.auth.exchange_code_for_session(
-                code_exchange_params
-            )
-        
+      
+
+        try:
+             params:  CodeExchangeParams = {
+                "auth_code": code.strip(),
+                "redirect_to": redirect_url.strip(),
+                "code_verifier": code_verifier.strip(),
+            }
+
+             auth_response = await self.client.auth.exchange_code_for_session(params)
         except Exception as e:
-            raise ValueError("Missing or invalid parameters for OAuth code exchange.") 
+            raise ValueError(f"OAuth code exchange failed: {e!r}") from e
+
+        return {
+            "session": getattr(auth_response, "session", None),
+            "user": getattr(auth_response, "user", None),
+            "auth_response": auth_response
+        }
