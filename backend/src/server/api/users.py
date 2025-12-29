@@ -1,9 +1,10 @@
 from enum import Enum
 from typing import Any
+from datetime import datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 from server.core.supabase_client import get_supabase_client
 from server.services.auth_service import AuthService
@@ -19,25 +20,46 @@ class Provider(str, Enum):
 class OAuthLoginRequest(BaseModel):
     provider: Provider
     redirect_url: str
+    
 
 
 class OAuthCallbackRequest(BaseModel):
     provider: Provider
     code: str
-    redirect_url: str
-    code_verifier: str
+    redirect_url: str 
+    code_verifier: str 
 
 
 class OAuthResponse(BaseModel):
     auth_url: str
 
+class UserBase(BaseModel):
+    """Base user schema"""
+
+    email: EmailStr
+
+class UserResponse(UserBase):
+    """User response schema"""
+
+    id: str
+    full_name: str
+    created_at: datetime | None = None
+
+
+class TokenResponse(BaseModel):
+    """Token response schema"""
+
+    access_token: str = ""
+    refresh_token: str = ""
+    token_type: str = "bearer"
+
 
 class AuthResponse(BaseModel):
-    access_token: str
-    refresh_token: str
-    expires_in: int
-    token_type: str
-    user: dict[str, Any]
+    """Authentication response schema"""
+
+    user: UserResponse
+    token: TokenResponse
+
 
 
 
@@ -50,26 +72,37 @@ async def get_auth_service() -> AuthService:
 
 
 def format_auth_response(result: dict[str, Any]) -> AuthResponse:
-    access_token = result.get("access_token")
-    refresh_token = result.get("refresh_token")
-    expires_in = result.get("expires_in")
-    token_type = result.get("token_type")
-    user = result.get("user")
+    
+   
 
-    if not access_token or not refresh_token or expires_in is None or not token_type or user is None:
-        raise HTTPException(
-            status_code=status.HTTP_502_BAD_GATEWAY,
-            detail="Supabase did not return a complete session.",
-        )
-
-    return AuthResponse(
-        access_token=access_token,
-        refresh_token=refresh_token,
-        expires_in=int(expires_in),
-        token_type=token_type,
-        user=user,
+    user_response = UserResponse(
+        id=result["user"]["id"],
+        full_name=result["user"].get("full_name", ""),
+        email=result["user"]["email"],
+       
     )
 
+    # Handle optional session data
+    token_response = TokenResponse(
+        access_token="",
+        refresh_token="",
+        token_type="bearer",
+    )
+
+    # Safely handle session data which might be dict or other type
+    session_data = result.get("session")
+    if (
+        session_data
+        and isinstance(session_data, dict)
+        and session_data.get("access_token")
+    ):
+        token_response = TokenResponse(
+            access_token=session_data["access_token"],
+            refresh_token=session_data["refresh_token"],
+            token_type="bearer",
+        )
+
+    return AuthResponse(user=user_response, token=token_response)
 
 def handle_auth_error(error: Exception) -> HTTPException:
     return HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
@@ -84,6 +117,7 @@ async def google_login(
     
     try:
         result = await auth_service.oauth_login(request.provider, request.redirect_url)
+        print("result:", result)  # shows in the Uvicorn terminal logs
         return OAuthResponse(auth_url=result["auth_url"])
     except ValueError as e:
         raise HTTPException(
@@ -98,12 +132,28 @@ async def google_login(
 
 @router.post("/oauth/callback", response_model=AuthResponse, )
 async def oauth_callback_get(
-    request: OAuthCallbackRequest,
+    request: Request,
    auth_service: AuthService = Depends(get_auth_service)
 )-> AuthResponse:
+    
+    code = request.query_params.get("code")
+    provider = request.query_params.get("provider", "google")  # default to google
+    redirect_url = "http://localhost:3000/dashboard"  # hardcoded safe redirect
+    code_verifier = None  # optional, retrieved from PKCE storage if needed
+
+    if not code:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No code found in query parameters"
+        )
     """Browser redirect target (GET). Exchanges the code for tokens."""
     try:
-        result = await auth_service.handle_oauth_callback(request.provider, request.code, request.redirect_url, request.code_verifier   ) 
+        result = await auth_service.handle_oauth_callback(  
+            provider,
+            code,
+            redirect_url,
+            code_verifier)  
+        print("OAuth callback result:", result)  # Debugging statement
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -111,8 +161,6 @@ async def oauth_callback_get(
         ) from e
     except Exception as e:  
         raise handle_auth_error(e) from e
-       
-    print("Result:", result)  # shows in the Uvicorn terminal logs
 
     # NOTE: your format_auth_response currently expects token fields at top-level.
     # If your AuthService returns {"session": ..., "user": ...}, update format_auth_response accordingly.
