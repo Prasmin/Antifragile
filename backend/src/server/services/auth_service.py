@@ -7,10 +7,12 @@ from typing import Any, Optional
 from supabase import AsyncClient
 from supabase_auth import CodeExchangeParams
 from server.core.supabase_client import get_supabase_client
+from fastapi import Query 
 
 class AuthService:
     def __init__(self, client: AsyncClient):
         self.client = client
+        
 
     async def oauth_login(self, provider: str, redirect_url: str) -> dict[str, Any]:
         """Initiate OAuth login flow (Supabase handles PKCE internally)."""
@@ -23,6 +25,9 @@ class AuthService:
         maybe_auth_response = self.client.auth.sign_in_with_oauth(
             {"provider": provider_normalized, "options": {"redirect_to": "http://localhost:8000/auth/callback"}}
         )
+
+        print ("Maybe Auth Response:", maybe_auth_response)
+       
 
         auth_response = (
             await maybe_auth_response
@@ -37,7 +42,7 @@ class AuthService:
         return {"auth_url": auth_url}
 
     async def handle_oauth_callback(
-        self, provider: str, code: str, redirect_url: str, code_verifier: Optional[str] = None
+        self, provider: str, code: str, redirect_to: str, code_verifier: str
     ) -> dict[str, Any]:
         """Handle OAuth callback - exchange auth code for session (PKCE requires code_verifier)."""
         provider_normalized = provider.strip().lower()
@@ -51,7 +56,7 @@ class AuthService:
              auth_response = await self.client.auth.exchange_code_for_session({
                 "code_verifier": code_verifier.strip(),
                 "auth_code": code.strip(), 
-                "redirect_to": redirect_url.strip(),
+                "redirect_to": redirect_to.strip(),
                 
             })
             

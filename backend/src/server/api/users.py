@@ -3,7 +3,7 @@ from typing import Any
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, params, status
 from pydantic import BaseModel, EmailStr
 
 from server.core.supabase_client import get_supabase_client
@@ -26,7 +26,7 @@ class OAuthLoginRequest(BaseModel):
 class OAuthCallbackRequest(BaseModel):
     provider: Provider
     code: str
-    redirect_url: str 
+    redirect_to: str 
     code_verifier: str 
 
 
@@ -117,7 +117,7 @@ async def google_login(
     
     try:
         result = await auth_service.oauth_login(request.provider, request.redirect_url)
-        print("result:", result)  # shows in the Uvicorn terminal logs
+        
         return OAuthResponse(auth_url=result["auth_url"])
     except ValueError as e:
         raise HTTPException(
@@ -128,41 +128,22 @@ async def google_login(
         raise handle_auth_error(e) from e
 
     
-
-
-@router.post("/oauth/callback", response_model=AuthResponse, )
-async def oauth_callback_get(
-    request: Request,
-   auth_service: AuthService = Depends(get_auth_service)
-)-> AuthResponse:
-    
-    code = request.query_params.get("code")
-    provider = request.query_params.get("provider", "google")  # default to google
-    redirect_url = "http://localhost:3000/dashboard"  # hardcoded safe redirect
-    code_verifier = None  # optional, retrieved from PKCE storage if needed
-
-    if not code:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="No code found in query parameters"
-        )
-    """Browser redirect target (GET). Exchanges the code for tokens."""
+@router.post("/callback", response_model=AuthResponse)
+async def oauth_callback(
+    request: OAuthCallbackRequest,
+    auth_service: AuthService = Depends(get_auth_service),
+) -> AuthResponse:
+    print("request:", request)
+    """Handle Google OAuth callback and exchange code for tokens"""
     try:
-        result = await auth_service.handle_oauth_callback(  
-            provider,
-            code,
-            redirect_url,
-            code_verifier)  
-        print("OAuth callback result:", result)  # Debugging statement
+        result = await auth_service.handle_oauth_callback(
+            request.provider, request.code, request.redirect_to, request.code_verifier
+        )
+        return format_auth_response(result)
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e),
         ) from e
-    except Exception as e:  
+    except Exception as e:
         raise handle_auth_error(e) from e
-
-    # NOTE: your format_auth_response currently expects token fields at top-level.
-    # If your AuthService returns {"session": ..., "user": ...}, update format_auth_response accordingly.
-    return format_auth_response(result) # Debugging statement;
-
