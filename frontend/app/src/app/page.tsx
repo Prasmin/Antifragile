@@ -1,4 +1,5 @@
 import HeroPage from "@/components/Hero/HeroPage";
+import Navbar from "@/components/Navbar/page";
 
 
 export default function Home() {
@@ -6,6 +7,7 @@ export default function Home() {
     <div>
       
       <div >
+         <Navbar/>
          <HeroPage/>
       </div>
     </div>
