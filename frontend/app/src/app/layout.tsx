@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${EBGaramondSerif.variable} ${geistMono.variable} antialiased`}
+        className={`${EBGaramondSerif.variable} ${geistMono.variable} antialiased bg-[var(--color-background)] text-[var(--color-foreground)]`}
       >
        
         {children}
