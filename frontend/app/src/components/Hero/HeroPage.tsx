@@ -4,7 +4,7 @@ import Prism from "@/components/Prism";
 const HeroPage = () => {
   return (
     <section>
-      <div className="relative w-full h-[200px] md:h-[900px]">
+      <div className=" ">
         <Prism
           animationType="rotate"
           timeScale={0.5}

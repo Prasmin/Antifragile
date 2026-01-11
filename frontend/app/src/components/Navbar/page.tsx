@@ -1,46 +1,79 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import navbarItems from "./navbarItems";
+import { useState } from "react";
 
 const Navbar = () => {
+  const [open, setOpen] = useState(false);
+
+  const onToggle = () => {
+    setOpen(!open);
+  };
   return (
     <>
-      <nav>
-        <div className="absolute absolute flex justify-between max-w-7xl inset-x-0 mx-auto">
-          <div>
-            <Image
-              src="/zeimusu-Vitruvian-Man.svg"
-              alt="logo"
-              width={140}
-              height={30}
-            />
+      <header className="  sm:mt-6 bg-white/20 backdrop-blur-sm rounded-lg max-w-7xl mx-auto shadow-xl/20 border mt-4 border-white/10">
+        <nav className=" flex justify-between items-center  mx-2 py-4 lg:px-8 ">
+          <div className=" bg-white/80 rounded-full  ">
+            <Link href="/">
+              <Image
+                src="/logo.svg"
+                alt="Zeimus Vitruvian Man"
+                width={60}
+                height={60}
+                quality={75}
+              />
+            </Link>
           </div>
-          <div className="flex items-center justify-center">
-            <div>
-              <ul
-                className="hidden md:flex gap-6 lg:gap-8"
-                aria-label="Main navigation"
-              >
-                {navbarItems.map((item) => (
-                  <li key={item.path}>
+
+          <div className="hidden sm:block">
+            {navbarItems.map((item) => (
+              <Link href={item.path} key={item.id} className="mx-4">
+                {item.title}
+              </Link>
+            ))}
+          </div>
+          <div className="bg-indigo-500 hover:bg-indigo-600 shadow-lg shadow-indigo-500/50 cursor-pointer rounded-full px-4 py-2 text-white shadow-xl text-shadow-lg/30 sm:block hidden">
+            Sign In
+          </div>
+
+          <div className="lg:hidden">
+            <button type="button" aria-label="Mobile Menu" onClick={onToggle}>
+              <Image
+                className="text-white"
+                src={open ? "/close.svg" : "/hamburger.svg"}
+                alt="Menu Icon"
+                width={30}
+                height={30}
+                quality={75}
+              />
+            </button>
+          </div>
+        </nav>
+        <div>
+          {open && (
+            <>
+              <div className="flex flex-col sm:hidden min-h-screen bg-white/20 backdrop-blur-sm rounded-b-lg border-t border-white/10  ">
+                <div>
+                  {navbarItems.map((item) => (
                     <Link
                       href={item.path}
-                      className="hover:underline focus:underline transition-colors duration-150 flex space-x-4 items-center"
+                      key={item.id}
+                      className="flex flex-col mt-6 mx-2"
                     >
                       {item.title}
                     </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className=" space-x-4">
-              <Link href="/login">Sign up</Link>
-              <Link href="/signup">Sign in</Link>
-            </div>
-          </div>
+                  ))}
+                </div>
+                <div className="bg-indigo-500 hover:bg-indigo-600 shadow-lg shadow-indigo-500/50 cursor-pointer rounded-full px-4 py-2 text-white shadow-xl text-shadow-lg/30 mt-5">
+                  Sign In
+                </div>
+              </div>
+            </>
+          )}
         </div>
-      </nav>
+      </header>
     </>
   );
 };

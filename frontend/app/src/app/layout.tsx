@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { EB_Garamond, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-
 const EBGaramondSerif = EB_Garamond({
   variable: "--font-eb-garamond",
   subsets: ["latin"],
@@ -15,7 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Antifragile — Learn Better, Think Deeper, Grow Stronger ",
-  description: "A learning and reflection platform designed to cultivate clarity, resilience, and antifragile thinking in an uncertain world.",
+  description:
+    "A learning and reflection platform designed to cultivate clarity, resilience, and antifragile thinking in an uncertain world.",
 };
 
 export default function RootLayout({
@@ -24,11 +24,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" >
       <body
-        className={`${EBGaramondSerif.variable} ${geistMono.variable} antialiased bg-[var(--color-background)] text-[var(--color-foreground)]`}
+        className={`${geistMono.variable} ${EBGaramondSerif.variable} antialiased bg-background `}
       >
-       
         {children}
       </body>
     </html>
