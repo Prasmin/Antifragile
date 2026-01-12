@@ -35,7 +35,7 @@ const Navbar = () => {
             ))}
           </div>
           <div className="bg-indigo-500 hover:bg-indigo-600 shadow-lg shadow-indigo-500/50 cursor-pointer rounded-full px-4 py-2 text-white shadow-xl text-shadow-lg/30 sm:block hidden">
-            Sign In
+            Sign Up
           </div>
 
           <div className="lg:hidden">
