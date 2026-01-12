@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { EB_Garamond, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+import Navbar from "@/components/Navbar/page";
+
 const EBGaramondSerif = EB_Garamond({
   variable: "--font-eb-garamond",
   subsets: ["latin"],
@@ -24,11 +26,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" >
+    <html lang="en">
       <body
-        className={`${geistMono.variable} ${EBGaramondSerif.variable} antialiased bg-background `}
+        className={`${geistMono.variable} ${EBGaramondSerif.variable}  antialiased bg-background  `}
       >
-        {children}
+        
+        <Navbar />
+        <main>{children}</main>
       </body>
     </html>
   );

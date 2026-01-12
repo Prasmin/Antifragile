@@ -1,31 +1,20 @@
 "use client";
-import Prism from "@/components/Prism";
+
 import RotatingText from "../RotatingText";
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import Prism from "../Prism";
 
 const HeroPage = () => {
    const [locked, setLocked] = useState(true);
   return (
    
-    <div>
-      <div className="absolute w-full h-screen inset-0 -z-10 ">
-        <Prism
-          animationType="rotate"
-          timeScale={0.5}
-          height={3.5}
-          baseWidth={5.5}
-          hueShift={0}
-          colorFrequency={1}
-          noise={0}
-          glow={0.3}
-        />
-      </div>
-      <div>
+      
+      <section className="relative z-10 py-[120px]">
 
       
-      <h1 className="flex justify-center min-w-[140px] text-center font-bold sm:text-4xl text-gray-300  space-x-2 mt-40 sm:mt-50  ">
+      <h1 className="flex justify-center min-w-[140px] text-center font-bold sm:text-4xl text-gray-300  space-x-2 mt-40 sm:mt-30  ">
         Return Home for
         <RotatingText
           texts={["Clear", "Calm", "Steady"]}
@@ -55,8 +44,20 @@ const HeroPage = () => {
   )}
   </Link>
 </div>
-    </div>
-    </div>
+<div className="absolute -top-30 inset-0 -z-10 ">
+          <Prism
+            animationType="rotate"
+            timeScale={0.5}
+            height={3.5}
+            baseWidth={5.5}
+            hueShift={0}
+            colorFrequency={1}
+            noise={0}
+            glow={0.3}
+          />
+        </div>
+    </section>
+    
     
   );
 };
