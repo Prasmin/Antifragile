@@ -32,7 +32,7 @@ export default function RootLayout({
       >
         
         <Navbar />
-        <main>{children}</main>
+        <main className="relative min-h-dvh overflow-hidden">{children}</main>
       </body>
     </html>
   );
