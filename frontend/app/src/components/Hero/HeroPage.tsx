@@ -26,7 +26,7 @@ const HeroPage = () => {
         />
       </div>
      
-    <div className="min-h-[700px] z-10 sm:mt-[250px] mt-[350px]">
+    <div className="min-h-[700px] z-10 sm:mt-[350px] mt-[350px]">
       <h1 className="flex justify-center sm:text-4xl text-xl min-w-[140px] text-center font-bold text-white   space-x-2   ">
         Return Home for
         <RotatingText

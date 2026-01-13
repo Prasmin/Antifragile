@@ -4,6 +4,8 @@ import "./globals.css";
 
 import Navbar from "@/components/Navbar/page";
 
+import Footer from "@/components/footer";
+
 const EBGaramondSerif = EB_Garamond({
   variable: "--font-eb-garamond",
   subsets: ["latin"],
@@ -33,6 +35,9 @@ export default function RootLayout({
         
         <Navbar />
         <main className="relative min-h-dvh overflow-hidden">{children}</main>
+
+        <Footer />
+      
       </body>
     </html>
   );
