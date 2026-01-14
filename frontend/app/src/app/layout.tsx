@@ -33,7 +33,7 @@ export default function RootLayout({
         className={`${geistMono.variable} ${EBGaramondSerif.variable}  antialiased bg-background  `}
       >
         
-        <Navbar />
+        <Navbar  />
         <main className="relative min-h-dvh overflow-hidden">{children}</main>
 
         <Footer />
