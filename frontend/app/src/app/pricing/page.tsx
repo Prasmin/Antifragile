@@ -3,7 +3,7 @@ import { PRICING_PLANS } from "@/lib/pricing";
 
 const PricingSection = () => {
   return (
-    <section className="grid gap-6 md:grid-cols-3 sm:mt-45 mt-20 px-4 ">
+    <section className="grid gap-6 md:grid-cols-2 sm:mt-45 mt-30  px-4 ">
       {PRICING_PLANS.map((plan) => (
         <PricingCard
           key={plan.id}

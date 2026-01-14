@@ -12,13 +12,13 @@ const PricingCard = ({
   price,
   description,
   features,
-  ctaText = "Get Started",
+  ctaText,
   highlighted = false,
 }: PricingCardProps) => {
   return (
     <div
       className={`rounded-2xl border p-6 shadow-sm transition hover:shadow-md
-        ${highlighted ? "border-black bg-neutral-50 scale-[1.02]" : "border-neutral-200"}
+        ${highlighted ? "border-black bg-neutral-50 scale-[1.02]" : "border-neutral-10"}
       `}
     >
       {highlighted && (
@@ -27,28 +27,28 @@ const PricingCard = ({
         </span>
       )}
 
-      <h2 className="text-xl font-semibold text-black">{title}</h2>
+      <h2 className={`text-xl font-semibold ${highlighted ? "text-black" : "text-white"}`}>{title}</h2>
 
       {description && (
-        <p className="mt-1 text-sm text-black">{description}</p>
+        <p className={`mt-1 text-sm ${highlighted ? "text-black" : "text-white"}`}>{description}</p>
       )}
 
-      <p className="mt-4 text-3xl text-black font-bold">{price}</p>
+      <p className={`mt-4 text-3xl font-bold ${highlighted ? "text-black" : "text-white"} `}>{price}</p>
 
       <ul className="mt-6 space-y-3 text-sm">
         {features.map((feature, index) => (
-          <li key={index} className="flex text-black items-start gap-2">
-            <span className="mt-1 text-black">✓</span>
-            <span>{feature}</span>
+          <li key={index} className="flex  items-start gap-2">
+            <span className={`mt-1 ${highlighted ? "text-black" : "text-white"}`}>✓</span>
+            <span className={`mt-1 ${highlighted ? "text-black" : "text-white"}`}>{feature}</span>
           </li>
         ))}
       </ul>
 
       <button
-        className={`mt-6 w-full rounded-xl px-4 py-2 text-sm font-medium
+        className={`mt-6 w-full rounded-xl px-4 py-2 text-sm font-medium cursor-pointer 
           ${highlighted
             ? "bg-black text-white hover:bg-neutral-800"
-            : "border border-neutral-300 hover:bg-neutral-100"}
+            : "border hover:border-neutral-300 "}
         `}
       >
         {ctaText}
