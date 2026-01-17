@@ -18,7 +18,7 @@ export function AuthDemoPage({
   children,
 }: AuthDemoPageProps) {
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-br from-[#02050b] via-[#050c1d] to-[#071426] text-slate-100">
+    <div className="flex min-h-screen mt-34 flex-col bg-gradient-to-br from-[#02050b] via-[#050c1d] to-[#071426] text-slate-100">
       <header className="border-b border-white/10 bg-slate-950/40 backdrop-blur">
         <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-5">
           <div>

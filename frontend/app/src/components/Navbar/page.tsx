@@ -4,11 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import navbarItems from "./navbarItems";
 import { useState } from "react";
-import { useGoogleSignIn } from "@/hooks/useGoogleSignIn";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
-  const googleSignIn = useGoogleSignIn();
 
   const onToggle = () => {
     setOpen(!open);
@@ -38,9 +36,12 @@ const Navbar = () => {
                   </Link>
                 ))}
               </div>
-              <div onClick={googleSignIn} className="bg-indigo-500 hover:bg-indigo-600 shadow-lg shadow-indigo-500/50 cursor-pointer rounded-full px-4 py-2 text-white shadow-xl text-shadow-lg/30 sm:block hidden">
+              <Link
+                href="/google-login"
+                className="bg-indigo-500 hover:bg-indigo-600 shadow-lg shadow-indigo-500/50 cursor-pointer rounded-full px-4 py-2 text-white shadow-xl text-shadow-lg/30 sm:block hidden"
+              >
                 Sign Up
-              </div>
+              </Link>
 
               <div className="lg:hidden">
                 <button
@@ -76,7 +77,7 @@ const Navbar = () => {
                     </div>
                     <div
                       className="bg-indigo-500 hover:bg-indigo-600 shadow-lg shadow-indigo-500/50 cursor-pointer rounded-full px-4 py-2 text-white shadow-xl text-shadow-lg/30 mt-5"
-                      onClick={googleSignIn}
+                      
                     >
                       Sign In
                     </div>
@@ -87,7 +88,6 @@ const Navbar = () => {
           </div>
         </div>
       </header>
-      
     </>
   );
 };
