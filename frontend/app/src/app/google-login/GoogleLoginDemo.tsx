@@ -22,19 +22,19 @@ export default function GoogleLoginDemo({ user }: GoogleLoginDemoProps) {
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setCurrentUser(session?.user ?? null);
-      }
+      },
     );
 
     return () => {
       listener?.subscription.unsubscribe();
     };
-  }, [supabase])
+  }, [supabase]);
 
   async function handleGoogleLogin() {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/google-login`,
+        redirectTo: `${window.location.origin}/dashboard`,
         skipBrowserRedirect: false,
       },
     });
@@ -107,10 +107,11 @@ export default function GoogleLoginDemo({ user }: GoogleLoginDemoProps) {
             </p>
           </div>
           <span
-            className={`rounded-full px-3 py-1 text-xs font-semibold ${currentUser
-              ? "bg-emerald-500/20 text-emerald-200"
-              : "bg-white/10 text-slate-400"
-              }`}
+            className={`rounded-full px-3 py-1 text-xs font-semibold ${
+              currentUser
+                ? "bg-emerald-500/20 text-emerald-200"
+                : "bg-white/10 text-slate-400"
+            }`}
           >
             {currentUser ? "Active" : "Idle"}
           </span>
@@ -129,9 +130,13 @@ export default function GoogleLoginDemo({ user }: GoogleLoginDemoProps) {
               <div className="flex items-center justify-between gap-6">
                 <dt className="text-slate-400">Last sign in</dt>
                 <dd>
-                  {currentUser.last_sign_in_at
-                    ? new Date(currentUser.last_sign_in_at).toLocaleString()
-                    : "—"}
+                  {currentUser.last_sign_in_at ? (
+                    <span suppressHydrationWarning={true}>
+                      {new Date(currentUser.last_sign_in_at).toLocaleString()}
+                    </span>
+                  ) : (
+                    "—"
+                  )}
                 </dd>
               </div>
             </dl>
