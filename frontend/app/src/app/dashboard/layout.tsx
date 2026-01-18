@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { EB_Garamond, Geist_Mono } from "next/font/google";
-import "./globals.css";
+
 
 import Navbar from "@/components/Navbar/page";
 
@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Antifragile — Learn Better, Think Deeper, Grow Stronger ",
   description:
-    "A learning and reflection platform designed to cultivate clarity, resilience, and antifragile thinking in an uncertain world.",
+    "A learning and reflection platform designed to cultivate clarity, resilience, and antifragile thinking in an uncertain world. Antifragile helps curious people develop real-world skills — like decision-making, communication, and self-regulation — by learning from daily experience, not endless content",
 };
 
 export default function RootLayout({
@@ -33,10 +33,10 @@ export default function RootLayout({
         className={`${geistMono.variable} ${EBGaramondSerif.variable}  antialiased bg-background  `}
       >
         
-        <Navbar  />
-        <main className="relative min-h-dvh overflow-hidden">{children}</main>
+       
+       {children}
 
-        <Footer />
+        
       
       </body>
     </html>
