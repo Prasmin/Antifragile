@@ -30,6 +30,12 @@ const navbarItems: Menu[] = [
     path: "/pricing",
     current: false,
   },
+  {
+    id: 5, 
+    title: "features",
+    path: "/features",
+    current: false,
+  },
 ]
 
 

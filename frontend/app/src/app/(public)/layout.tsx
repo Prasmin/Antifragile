@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { EB_Garamond, Geist_Mono } from "next/font/google";
 import "../../app/globals.css";
-
+import Navbar from "@/components/Navbar/page";
+import Footer from "@/components/footer";
 
 
 
@@ -29,14 +30,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistMono.variable} ${EBGaramondSerif.variable}  antialiased  bg-foreground `}
+        className={`${geistMono.variable} ${EBGaramondSerif.variable}  min-h-screen antialiased bg-background  `}
       >
       
-      
+      <Navbar />
        
        <main >{children}</main>
 
-       
+        <Footer/>
       
       </body>
     </html>
