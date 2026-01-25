@@ -53,9 +53,7 @@ export async function createSupabaseServerClientWithCookies() {
   });
 }
 
-/**
- * Middleware client that updates session and returns modified response
- */
+
 export async function updateSession(request: NextRequest) {
   const { supabaseUrl, supabasePublishableKey } = getEnvironmentVariables();
 

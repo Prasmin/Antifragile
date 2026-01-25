@@ -79,9 +79,7 @@ export default function GoogleLoginDemo({ user }: GoogleLoginDemoProps) {
               <h1 className="bg-gradient-to-r from-white to-slate-300 bg-clip-text text-2xl font-bold text-transparent">
                 Sign in to continue to your account
               </h1>
-              {/* <p className="mt-2 text-sm text-slate-400">
-                
-              </p> */}
+              
             </div>
 
             {/* Privacy Notice */}
