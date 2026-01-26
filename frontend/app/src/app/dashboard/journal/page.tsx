@@ -1,5 +1,9 @@
+
+import { SimpleEditor } from '@/components/tiptap-templates/simple/simple-editor'
+
 // import React from "react";
 // import { Radio, Zap, Trash2, ArrowDownCircle, ShieldCheck } from "lucide-react";
+
 
 // interface RefineryData {
 //   stressor_summary: "You experienced multiple distractions during your work session.";
@@ -130,5 +134,13 @@
 
 
 export default function JournalPage() {
-  return <div className="min-h-screen flex items-center justify-center text-slate-500 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">Journal Page Coming Soon...</div>;
+  return (<div className=" absolute z-20 min-h-screen overflow-hidden">
+    <div className='relative top-60 z-30 my-8 '>
+
+    <SimpleEditor />
+    </div>
+    
+    
+    
+    </div>);
 }
