@@ -18,13 +18,13 @@ const DasNav = async () => {
   return(
 
     //  Header with profile
-    <div className=" absolute top-0 z-20  inset-0 p-8">
+    <header className="mx-auto max-w-9xl py-4  ">
 
         <section className="rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-lg">
-          <h1 className="text-3xl font-bold text-white">
+          <h1 className="sm:text-3xl text-xl font-bold text-white">
             Antifragile Dashboard
           </h1>
-          <p className="mt-2 text-slate-300">
+          <p className="mt-2 text-slate-300 sm:text-lg text-sm">
             Your personal hub for growth, decision‑making and clarity.
           </p>
           <div className="mt-6 flex items-center gap-4">
@@ -41,7 +41,7 @@ const DasNav = async () => {
               <p className="font-medium text-white">
                 {user.user_metadata?.full_name || user.email}
               </p>
-              <p className="text-sm text-slate-400">{user.email}</p>
+              <p className="sm:text-sm text-xs text-slate-400">{user.email}</p>
             </div>
             <form action={signOut} className="ml-auto">
               <button
@@ -55,7 +55,7 @@ const DasNav = async () => {
         </section> 
 
 
-                </div>
+                </header>
   ) ;
 }
 

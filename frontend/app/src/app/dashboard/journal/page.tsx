@@ -1,8 +1,8 @@
-
-import { SimpleEditor } from '@/components/tiptap-templates/simple/simple-editor'
-
 // import React from "react";
 // import { Radio, Zap, Trash2, ArrowDownCircle, ShieldCheck } from "lucide-react";
+
+import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
+
 
 
 // interface RefineryData {
@@ -132,15 +132,19 @@ import { SimpleEditor } from '@/components/tiptap-templates/simple/simple-editor
 //   return <RefineryView data={testData} />;
 // }
 
-
 export default function JournalPage() {
-  return (<div className=" absolute z-20 min-h-screen overflow-hidden">
-    <div className='relative top-60 z-30 my-8 '>
+  return (
 
-    <SimpleEditor />
+    <div className="max-w-4xl mx-auto flex justify-center items-center outline-1 sm:min-h-100 h-80 bg-white text-black">
+    
+
+      <SimpleEditor  />
+    
+    
+
+
+
+      
     </div>
-    
-    
-    
-    </div>);
+  );
 }

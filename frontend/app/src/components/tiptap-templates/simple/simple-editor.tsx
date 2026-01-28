@@ -101,8 +101,8 @@ const MainToolbarContent = ({
           types={["bulletList", "orderedList", "taskList"]}
           portal={isMobile}
         />
-        <BlockquoteButton />
-        <CodeBlockButton />
+        
+        
       </ToolbarGroup>
 
       <ToolbarSeparator />
@@ -111,7 +111,7 @@ const MainToolbarContent = ({
         <MarkButton type="bold" />
         <MarkButton type="italic" />
         <MarkButton type="strike" />
-        <MarkButton type="code" />
+        
         <MarkButton type="underline" />
         {!isMobile ? (
           <ColorHighlightPopover />
@@ -123,12 +123,9 @@ const MainToolbarContent = ({
 
       <ToolbarSeparator />
 
-      <ToolbarGroup>
-        <MarkButton type="superscript" />
-        <MarkButton type="subscript" />
-      </ToolbarGroup>
+      
 
-      <ToolbarSeparator />
+      
 
       <ToolbarGroup>
         <TextAlignButton align="left" />
@@ -139,17 +136,13 @@ const MainToolbarContent = ({
 
       <ToolbarSeparator />
 
-      <ToolbarGroup>
-        <ImageUploadButton text="Add" />
-      </ToolbarGroup>
+      
 
       <Spacer />
 
       {isMobile && <ToolbarSeparator />}
 
-      <ToolbarGroup>
-        <ThemeToggle />
-      </ToolbarGroup>
+      
     </>
   )
 }
