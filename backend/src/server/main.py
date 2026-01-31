@@ -14,7 +14,6 @@ app = FastAPI(
 # CORS configuration
 origins = [
     "http://localhost:3000",
-    "http://localhost:5173",  # Vite default
     os.environ.get("FRONTEND_URL", ""),
 ]
 
