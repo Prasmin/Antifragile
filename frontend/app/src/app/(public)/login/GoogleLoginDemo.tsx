@@ -12,6 +12,7 @@ export default function GoogleLoginDemo({ user }: GoogleLoginDemoProps) {
   const supabase = getSupabaseBrowserClient();
   const [currentUser, setCurrentUser] = useState<User | null>(user);
 
+
   async function handleSignOut() {
     await supabase.auth.signOut();
     setCurrentUser(null);
@@ -23,6 +24,7 @@ export default function GoogleLoginDemo({ user }: GoogleLoginDemoProps) {
         setCurrentUser(session?.user ?? null);
       },
     );
+    
 
     return () => {
       listener?.subscription.unsubscribe();
@@ -41,6 +43,9 @@ export default function GoogleLoginDemo({ user }: GoogleLoginDemoProps) {
         },
         scopes: "openid profile email",
       },
+    });
+    console.log("options.redirectTo", {
+      redirectTo: `${window.location.origin}/auth/callback`,
     });
   }
 
@@ -79,7 +84,6 @@ export default function GoogleLoginDemo({ user }: GoogleLoginDemoProps) {
               <h1 className="bg-gradient-to-r from-white to-slate-300 bg-clip-text text-2xl font-bold text-transparent">
                 Sign in to continue to your account
               </h1>
-              
             </div>
 
             {/* Privacy Notice */}
