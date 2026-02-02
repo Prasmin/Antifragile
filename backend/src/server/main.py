@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from server.api.users import router as users_router
+
+from server.api.user_routes import router as users_router
 from server.core.supabase_client import lifespan
 import os
 
@@ -29,7 +30,7 @@ app.add_middleware(
 
 
 # Include routers
-app.include_router(users_router)
+app.include_router(users_router)  # /users/* routes (protected CRUD)
 
 
 
