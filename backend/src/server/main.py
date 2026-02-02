@@ -2,13 +2,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from server.api.users import router as users_router
+from server.core.supabase_client import lifespan
 import os
 
 
 app = FastAPI(
     title="Antifragile API",
     description="Backend API with Google OAuth authentication",
-    version="0.1.0"
+    version="0.1.0",
+    lifespan=lifespan,  # Connect the lifespan handler
 )
 
 # CORS configuration

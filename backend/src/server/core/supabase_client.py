@@ -1,37 +1,60 @@
-# database.py
-from sqlmodel import SQLModel
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
+
+
+from sqlmodel import SQLModel  
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker  
 from supabase import create_async_client, AsyncClient
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request, Depends
-import os
+from fastapi import FastAPI
+from typing import AsyncGenerator
 
-# SQLModel Setup (Direct PostgreSQL)
+
+
+
+from .config import DATABASE_URL, SUPABASE_URL, SUPABASE_KEY
+
+
+
+#  Use create_async_engine 
+
 engine = create_async_engine(
-    os.getenv("SUPABASE_DB_URL"),
+    DATABASE_URL,
     echo=True,
     pool_size=5,
     max_overflow=10,
-    pool_recycle=3600  # Supabase drops idle connections
+    pool_recycle=3600,
+    pool_pre_ping=True,
 )
-AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
-# Supabase Client Setup (Your existing pattern, but improved)
+#  Use async_sessionmaker (
+AsyncSessionLocal = async_sessionmaker(
+    bind=engine,
+    class_=AsyncSession,  
+    expire_on_commit=False,
+    autocommit=False,
+    autoflush=False,
+)
+
+
+# ============================================================
+# Supabase Client (HTTP API)
+# ============================================================
+
 class SupabaseManager:
     def __init__(self):
         self._client: AsyncClient | None = None
-    
+
     async def initialize(self):
         self._client = await create_async_client(
-            os.getenv("SUPABASE_URL"),
-            os.getenv("SUPABASE_KEY")
+            SUPABASE_URL,
+            SUPABASE_KEY,
         )
-    
+
     async def close(self):
         if self._client:
-            await self._client.aclose()
-    
+            # Close the underlying httpx async client
+            await self._client.postgrest.aclose()
+            self._client = None
+
     @property
     def client(self) -> AsyncClient:
         if not self._client:
@@ -40,21 +63,33 @@ class SupabaseManager:
 
 supabase_manager = SupabaseManager()
 
-# FastAPI Lifespan (Manages both)
+
+# ============================================================
+# FastAPI Lifespan (FIXED)
+# ============================================================
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
     await supabase_manager.initialize()
-    # Create SQLModel tables (use Alembic in production instead)
+    
+    # Create tables (async-safe)
     async with engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.create_all)
+    
     yield
-    # Shutdown
+    
+    # Shutdown ( dispose async engine)
     await supabase_manager.close()
+    await engine.dispose()  # Async engines need await dispose()
 
-# Dependencies
-async def get_db() -> AsyncSession:
-    """SQLModel Database Session"""
+
+# ============================================================
+# Dependencies (FIXED)
+# ============================================================
+
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    """SQLModel AsyncSession dependency"""
     async with AsyncSessionLocal() as session:
         try:
             yield session
@@ -65,6 +100,7 @@ async def get_db() -> AsyncSession:
         finally:
             await session.close()
 
+
 def get_supabase() -> AsyncClient:
-    """Supabase HTTP Client"""
+    """Supabase HTTP client"""
     return supabase_manager.client
