@@ -20,7 +20,7 @@ class UserUpdate(BaseModel):
     location: Optional[str] = None
     gender: Optional[str] = None
     age: Optional[int] = None
-
+    email: Optional[str] = None
 
 class UserResponse(BaseModel):
     """Schema for user response."""

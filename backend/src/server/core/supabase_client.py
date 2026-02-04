@@ -3,12 +3,8 @@
 from sqlmodel import SQLModel  
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker  
 from supabase import create_async_client, AsyncClient
-from contextlib import asynccontextmanager
-from fastapi import FastAPI
+
 from typing import AsyncGenerator
-
-
-
 
 from .config import DATABASE_URL, SUPABASE_URL, SUPABASE_KEY
 
@@ -68,20 +64,7 @@ supabase_manager = SupabaseManager()
 # FastAPI Lifespan (FIXED)
 # ============================================================
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Startup
-    await supabase_manager.initialize()
-    
-    # Create tables (async-safe)
-    async with engine.begin() as conn:
-        await conn.run_sync(SQLModel.metadata.create_all)
-    
-    yield
-    
-    # Shutdown ( dispose async engine)
-    await supabase_manager.close()
-    await engine.dispose()  # Async engines need await dispose()
+
 
 
 # ============================================================

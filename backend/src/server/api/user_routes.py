@@ -27,6 +27,7 @@ async def get_current_user_profile(
     """
     service = UserService(db)
     user = await service.get_user_by_id(UUID(current_user.id))
+   
     
     if not user:
         # User exists in Supabase Auth but not in our DB yet
