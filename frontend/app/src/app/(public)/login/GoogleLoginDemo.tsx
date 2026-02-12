@@ -15,7 +15,7 @@ export default function GoogleLoginDemo({ user }: GoogleLoginDemoProps) {
 
   async function handleSignOut() {
     await supabase.auth.signOut();
-    setCurrentUser(null);
+   
   }
 
   useEffect(() => {

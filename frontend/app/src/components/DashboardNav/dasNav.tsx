@@ -1,19 +1,11 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+
 import { signOut } from "@/app/auth/actions";
-import { redirect } from "next/navigation";
 import Image from "next/image";
+import type { User } from "@supabase/supabase-js";
 
 
-const DasNav = async () => {
-   const supabase = await createSupabaseServerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-  
-    // Protect route – redirect unauthenticated users to login
-    if (!user) {
-      redirect("/login");
-    }
+const DasNav = ({ user }: { user: User | null }) => {
+  if (!user) return null;
   
   return(
 

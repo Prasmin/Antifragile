@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { EB_Garamond, Geist_Mono } from "next/font/google";
 import "../../app/globals.css";
-import { redirect } from "next/dist/client/components/navigation";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+
 import DasNav from "@/components/DashboardNav/dasNav";
+import { createClient } from "@/lib/supabase/server";
+
 
 
 
@@ -29,16 +30,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-  const supabase = await createSupabaseServerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-  
-    // Protect route – redirect unauthenticated users to login
-    if (!user) {
-      redirect("/login");
-    }
+const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+ 
   return (
     <html lang="en">
       <body
@@ -46,7 +40,7 @@ export default async function RootLayout({
       >
       
       
-       <DasNav />
+       <DasNav user={user} />
        <main>{children}</main>
 
        
