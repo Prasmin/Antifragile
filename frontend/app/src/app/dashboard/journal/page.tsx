@@ -135,6 +135,14 @@ import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor
 export default function JournalPage() {
   return (
 
+    <div>
+<div>
+      <h1 className="sm:text-4xl text-xl font-bold  text-white text-center mt-10 mb-6">Generate Signal</h1>
+
+
+</div>
+   
+
     <div className="max-w-4xl mx-auto flex justify-center items-center outline-1 sm:min-h-100 h-80 bg-white text-black">
     
 
@@ -144,7 +152,7 @@ export default function JournalPage() {
 
 
 
-      
+       </div>
     </div>
     
   );
