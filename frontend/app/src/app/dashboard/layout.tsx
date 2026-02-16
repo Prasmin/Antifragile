@@ -40,14 +40,14 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistMono.variable} ${EBGaramondSerif.variable} antialiased bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen flex flex-col `}
+        className={`${geistMono.variable} ${EBGaramondSerif.variable} antialiased  min-h-screen flex flex-col `}
       >
         <SidebarProvider className="flex-1" defaultOpen>
           <AppSidebar user={user} />
-          <SidebarInset className="bg-transparent">
+          <SidebarInset >
             <div className="flex flex-1 flex-col">
               <div className="border-b border-white/10 px-4 py-3 md:hidden">
-                <SidebarTrigger className="text-white" />
+                <SidebarTrigger className="text-black" />
               </div>
               <main className="flex-1 px-4 py-6 lg:px-8">
                 

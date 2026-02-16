@@ -8,7 +8,6 @@ export default async function GoogleLoginPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
- console.log("User in login page:", user);
 
   // Redirect authenticated users to dashboard
   if (user) {

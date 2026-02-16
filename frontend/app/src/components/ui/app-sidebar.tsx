@@ -6,13 +6,10 @@ import { usePathname } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import {
   ActivityIcon,
-  BookOpenCheckIcon,
-  BriefcaseIcon,
+
   GaugeIcon,
   Layers3Icon,
   NotebookPenIcon,
-  Settings2Icon,
-  SparklesIcon,
 } from "lucide-react";
 
 import {
@@ -26,9 +23,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
+
   SidebarRail,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
@@ -68,30 +63,7 @@ const primaryNav: NavItem[] = [
   },
 ];
 
-const practiceNav: NavItem[] = [
-  {
-    title: "Simple Mode",
-    href: "/dashboard/simple",
-    icon: SparklesIcon,
-    description: "One-card focus",
-    badge: "Beta",
-  },
-  {
-    title: "Projects",
-    href: "/dashboard/journal?tab=projects",
-    icon: BriefcaseIcon,
-  },
-  {
-    title: "Library",
-    href: "/dashboard/journal?tab=library",
-    icon: BookOpenCheckIcon,
-  },
-  {
-    title: "Settings",
-    href: "/dashboard/setting",
-    icon: Settings2Icon,
-  },
-];
+
 
 interface AppSidebarProps {
   user: User | null;
@@ -149,51 +121,23 @@ export function AppSidebar({ user }: AppSidebarProps) {
     <>
       <Sidebar
         collapsible="icon"
-        className="bg-slate-900/80 text-white backdrop-blur"
+        className="bg-slate-900/80 text-black backdrop-blur "
       >
         <SidebarHeader className="gap-1 border-b border-white/5">
-          <p className="text-xs uppercase tracking-[0.3em] text-white/60">
+          <p className="text-xs uppercase tracking-[0.3em] text-black/60">
             Antifragile
           </p>
           <h1 className="text-lg font-semibold">Field Lab</h1>
-          <p className="text-xs text-white/50">
+          <p className="text-xs text-black/50">
             Learn better, think deeper, grow stronger.
           </p>
         </SidebarHeader>
         <SidebarContent>
-          {renderNavSection("Navigation", primaryNav)}
+          {renderNavSection("Tools", primaryNav)}
           <SidebarSeparator className="border-white/10" />
-          {renderNavSection("Practice", practiceNav)}
-          <SidebarGroup>
-            <SidebarGroupLabel>Routines</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton tooltip="Morning debrief" asChild>
-                    <Link href="/dashboard/journal?template=morning">
-                      Morning reset
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuSub>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild>
-                      <Link href="/dashboard/journal?template=evening">
-                        Evening scorecard
-                      </Link>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild>
-                      <Link href="/dashboard/barbell?mode=refine">
-                        Barbell refinement
-                      </Link>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                </SidebarMenuSub>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+        
+        
+          
         </SidebarContent>
         <SidebarFooter className="border-t border-white/5">
           <div className="flex items-center gap-3 rounded-md bg-white/5 px-2 py-3">

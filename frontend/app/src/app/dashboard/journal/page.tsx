@@ -137,7 +137,7 @@ export default function JournalPage() {
 
     <div>
 <div>
-      <h1 className="sm:text-4xl text-xl font-bold  text-white text-center mt-10 mb-6">Generate Signal</h1>
+      <h1 className="sm:text-4xl text-xl font-bold  text-background text-center mt-10 mb-6">Generate Signal</h1>
 
 
 </div>
