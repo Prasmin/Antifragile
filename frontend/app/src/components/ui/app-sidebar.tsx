@@ -69,6 +69,12 @@ interface AppSidebarProps {
   user: User | null;
 }
 
+
+
+
+
+
+<div className=".0"></div>
 export function AppSidebar({ user }: AppSidebarProps) {
   const pathname = usePathname();
   const displayName =

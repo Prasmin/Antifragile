@@ -1,9 +1,23 @@
+"use client";
+
 // import React from "react";
 // import { Radio, Zap, Trash2, ArrowDownCircle, ShieldCheck } from "lucide-react";
 
+import { useCallback, useRef, useState } from "react";
+
+import type { JSONContent } from "@tiptap/core";
+import { Image } from "@tiptap/extension-image";
+import { Highlight } from "@tiptap/extension-highlight";
+import { TaskItem, TaskList } from "@tiptap/extension-list";
+import { Subscript } from "@tiptap/extension-subscript";
+import { Superscript } from "@tiptap/extension-superscript";
+import { TextAlign } from "@tiptap/extension-text-align";
+import { Typography } from "@tiptap/extension-typography";
+import { generateJSON } from "@tiptap/html";
+import { StarterKit } from "@tiptap/starter-kit";
+
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
-
-
+import { updateEditorAction } from "@/app/server/journal/journal_action";
 
 // interface RefineryData {
 //   stressor_summary: "You experienced multiple distractions during your work session.";
@@ -132,28 +146,112 @@ import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor
 //   return <RefineryView data={testData} />;
 // }
 
+type EditorSnapshot = {
+  json: JSONContent | null;
+  text: string;
+};
+
+const tiptapParsingExtensions = [
+  StarterKit.configure({
+    horizontalRule: false,
+    link: {
+      openOnClick: false,
+      enableClickSelection: true,
+    },
+  }),
+  TextAlign.configure({ types: ["heading", "paragraph"] }),
+  TaskList,
+  TaskItem.configure({ nested: true }),
+  Highlight.configure({ multicolor: true }),
+  Image,
+  Typography,
+  Superscript,
+  Subscript,
+] as const;
+
+const serializeEditorContent = (html: string) =>
+  html.trim() ? generateJSON(html, tiptapParsingExtensions) : null;
+
 export default function JournalPage() {
+  const editorHostRef = useRef<HTMLDivElement | null>(null);
+  const [title, setTitle] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const buildEditorSnapshot = useCallback((): EditorSnapshot => {
+    const host = editorHostRef.current;
+    const content = host?.querySelector<HTMLElement>(".simple-editor-content");
+    const html = content?.innerHTML ?? "";
+    const text = content?.textContent?.trim() ?? "";
+
+    let json: JSONContent | null = null;
+
+    if (html.trim()) {
+      try {
+        json = serializeEditorContent(html);
+      } catch (error) {
+        console.error("Failed to convert editor content to JSON", error);
+      }
+    }
+
+    return { json, text };
+  }, []);
+
+  const handleOnSubmit = useCallback(async () => {
+    const { json, text } = buildEditorSnapshot();
+    const trimmedTitle = title.trim();
+
+    if (!trimmedTitle) {
+      console.error("Title is required.");
+      return;
+    }
+
+    if (!text || !json) {
+      console.error("Content is required.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await updateEditorAction({
+        title: trimmedTitle,
+        content: JSON.stringify(json),
+      });
+
+      console.log("Journal entry created");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [buildEditorSnapshot, title]);
+
   return (
+    <div className="">
+      <div className="max-w-4xl mx-auto flex flex-col justify-center gap-4 outline-1  sm:min-h-300 h-80 bg-white text-black p-6">
+        <input
+          type="text"
+          value={title}
+          onChange={(event) => setTitle(event.target.value)}
+          placeholder="Entry title"
+          className="w-full rounded-md border border-slate-200 bg-transparent px-4 py-2 text-base text-black-800 focus:border-blue-500 focus:outline-none"
+        />
 
-    <div>
-<div>
-      <h1 className="sm:text-4xl text-xl font-bold  text-background text-center mt-10 mb-6">Generate Signal</h1>
+        <div ref={editorHostRef}>
+          <SimpleEditor />
+        </div>
+      </div>
 
-
-</div>
-   
-
-    <div className="max-w-4xl mx-auto flex justify-center items-center outline-1 sm:min-h-100 h-80 bg-white text-black">
-    
-
-      <SimpleEditor  />
-    
-    
-
-
-
-       </div>
+      <div className="flex justify-center items-center mt-4 px-6 py-6">
+        <button
+          type="button"
+          onClick={handleOnSubmit}
+          disabled={isSubmitting}
+          className="relative flex items-center justify-center gap-3 rounded-[14px] bg-gradient-to-r from-blue-600 to-cyan-600 w-50 h-23 px-6 py-3 text-base font-semibold text-white disabled:opacity-60"
+        >
+          {isSubmitting ? "Saving..." : "Generate Signal"}
+        </button>
+      </div>
     </div>
-    
   );
 }
