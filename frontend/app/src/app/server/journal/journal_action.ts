@@ -9,7 +9,7 @@ import {
 import type {
   JournalEntryInput,
   JournalEntryRecord,
-} from "@/lib/journal/types";
+} from "@/lib/journal/journalSchema";
 import { createClient } from "@/lib/supabase/server";
 
 const TABLE = "journal_entries";
@@ -107,7 +107,7 @@ export async function GET(request: Request) {
   });
 }
 
-export async function updateEditorAction(
+export async function createJournalEntry(
   body: unknown,
 ): Promise<JournalEntryRecord> {
   const { supabase, user, error } = await getUserContext();
@@ -133,6 +133,7 @@ export async function updateEditorAction(
       .select("id,title,content,created_at,updated_at")
       .single();
 
+      console.log("data", data);
     if (insertError || !data) {
       throw new Error(insertError?.message ?? "Failed to create journal entry");
     }

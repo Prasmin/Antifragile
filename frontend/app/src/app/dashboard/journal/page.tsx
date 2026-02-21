@@ -3,21 +3,13 @@
 // import React from "react";
 // import { Radio, Zap, Trash2, ArrowDownCircle, ShieldCheck } from "lucide-react";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 
 import type { JSONContent } from "@tiptap/core";
-import { Image } from "@tiptap/extension-image";
-import { Highlight } from "@tiptap/extension-highlight";
-import { TaskItem, TaskList } from "@tiptap/extension-list";
-import { Subscript } from "@tiptap/extension-subscript";
-import { Superscript } from "@tiptap/extension-superscript";
-import { TextAlign } from "@tiptap/extension-text-align";
-import { Typography } from "@tiptap/extension-typography";
-import { generateJSON } from "@tiptap/html";
-import { StarterKit } from "@tiptap/starter-kit";
 
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
-import { updateEditorAction } from "@/app/server/journal/journal_action";
+import { createJournalEntry } from "@/app/server/journal/journal_action";
+
 
 // interface RefineryData {
 //   stressor_summary: "You experienced multiple distractions during your work session.";
@@ -151,53 +143,40 @@ type EditorSnapshot = {
   text: string;
 };
 
-const tiptapParsingExtensions = [
-  StarterKit.configure({
-    horizontalRule: false,
-    link: {
-      openOnClick: false,
-      enableClickSelection: true,
-    },
-  }),
-  TextAlign.configure({ types: ["heading", "paragraph"] }),
-  TaskList,
-  TaskItem.configure({ nested: true }),
-  Highlight.configure({ multicolor: true }),
-  Image,
-  Typography,
-  Superscript,
-  Subscript,
-] as const;
+// const tiptapParsingExtensions = [
+//   StarterKit.configure({
+//     horizontalRule: false,
+//     link: {
+//       openOnClick: false,
+//       enableClickSelection: true,
+//     },
+//   }),
+//   TextAlign.configure({ types: ["heading", "paragraph"] }),
+//   TaskList,
+//   TaskItem.configure({ nested: true }),
+//   Highlight.configure({ multicolor: true }),
+//   Typography,
+//   Superscript,
+//   Subscript,
+// ] as const;
 
-const serializeEditorContent = (html: string) =>
-  html.trim() ? generateJSON(html, tiptapParsingExtensions) : null;
+// const serializeEditorContent = (html: string) =>
+//   html.trim() ? generateJSON(html, tiptapParsingExtensions) : null;
 
 export default function JournalPage() {
-  const editorHostRef = useRef<HTMLDivElement | null>(null);
   const [title, setTitle] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [snapshot, setSnapshot] = useState<EditorSnapshot>({
+    json: null,
+    text: "",
+  });
 
-  const buildEditorSnapshot = useCallback((): EditorSnapshot => {
-    const host = editorHostRef.current;
-    const content = host?.querySelector<HTMLElement>(".simple-editor-content");
-    const html = content?.innerHTML ?? "";
-    const text = content?.textContent?.trim() ?? "";
-
-    let json: JSONContent | null = null;
-
-    if (html.trim()) {
-      try {
-        json = serializeEditorContent(html);
-      } catch (error) {
-        console.error("Failed to convert editor content to JSON", error);
-      }
-    }
-
-    return { json, text };
+  const handleEditorUpdate = useCallback((payload: EditorSnapshot) => {
+    setSnapshot(payload);
   }, []);
 
   const handleOnSubmit = useCallback(async () => {
-    const { json, text } = buildEditorSnapshot();
+    const { json, text } = snapshot;
     const trimmedTitle = title.trim();
 
     if (!trimmedTitle) {
@@ -213,7 +192,7 @@ export default function JournalPage() {
     setIsSubmitting(true);
 
     try {
-      await updateEditorAction({
+      await createJournalEntry({
         title: trimmedTitle,
         content: JSON.stringify(json),
       });
@@ -224,7 +203,7 @@ export default function JournalPage() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [buildEditorSnapshot, title]);
+  }, [snapshot, title]);
 
   return (
     <div className="">
@@ -237,9 +216,7 @@ export default function JournalPage() {
           className="w-full rounded-md border border-slate-200 bg-transparent px-4 py-2 text-base text-black-800 focus:border-blue-500 focus:outline-none"
         />
 
-        <div ref={editorHostRef}>
-          <SimpleEditor />
-        </div>
+        <SimpleEditor onUpdate={handleEditorUpdate} />
       </div>
 
       <div className="flex justify-center items-center mt-4 px-6 py-6">
