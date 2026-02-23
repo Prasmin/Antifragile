@@ -10,11 +10,41 @@ import type {
   JournalEntryInput,
   JournalEntryRecord,
 } from "@/lib/journal/journalSchema";
+import {
+  decryptContent,
+  encryptContent,
+  type EncryptedContent,
+} from "@/lib/crypto/encryption";
 import { createClient } from "@/lib/supabase/server";
 
 const TABLE = "journal_entries";
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 50;
+
+const tryDecryptContent = (rawContent: string): string => {
+  try {
+    const parsed = JSON.parse(rawContent) as EncryptedContent;
+
+    if (
+      parsed &&
+      typeof parsed.ciphertext === "string" &&
+      typeof parsed.iv === "string" &&
+      typeof parsed.authTag === "string"
+    ) {
+      return decryptContent(parsed);
+    }
+
+    return rawContent;
+  } catch (error) {
+    console.error("Failed to decrypt journal content", error);
+    return rawContent;
+  }
+};
+
+const toDecryptedRecord = (record: JournalEntryRecord): JournalEntryRecord => ({
+  ...record,
+  content: tryDecryptContent(record.content),
+});
 
 const sanitizeSearchTerm = (value: string | null) =>
   value?.replace(/[%]/g, "").trim() ?? "";
@@ -54,7 +84,7 @@ const getUserContext = async () => {
   return { supabase, user, error };
 };
 
-export async function GET(request: Request) {
+export async function getJournalEntries(request: Request) {
   const { supabase, user, error } = await getUserContext();
 
   if (error) {
@@ -81,7 +111,7 @@ export async function GET(request: Request) {
   }
 
   if (search) {
-    query = query.or(`title.ilike.%${search}%,content.ilike.%${search}%`);
+    query = query.or(`title.ilike.%${search}%`);
   }
 
   const { data } = await query;
@@ -98,7 +128,7 @@ export async function GET(request: Request) {
     items.length === limit ? items[items.length - 1].created_at : null;
 
   return NextResponse.json({
-    data: items,
+    data: items.map(toDecryptedRecord),
     meta: {
       count: items.length,
       limit,
@@ -124,21 +154,23 @@ export async function createJournalEntry(
 
   try {
     const payload = validateJournalCreatePayload(body as JournalEntryInput);
+    const encryptedContent = encryptContent(payload.content);
+
     const { data, error: insertError } = await supabase
       .from(TABLE)
       .insert({
-        ...payload,
+        title: payload.title,
+        content: JSON.stringify(encryptedContent),
         user_id: userId,
       })
       .select("id,title,content,created_at,updated_at")
       .single();
 
-      console.log("data", data);
     if (insertError || !data) {
       throw new Error(insertError?.message ?? "Failed to create journal entry");
     }
 
-    return data as JournalEntryRecord;
+    return toDecryptedRecord(data as JournalEntryRecord);
   } catch (error) {
     if (error instanceof JournalValidationError) {
       throw new Error(error.message);

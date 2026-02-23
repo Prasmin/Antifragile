@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import {
   ActivityIcon,
-
+  PlusIcon,
   GaugeIcon,
   Layers3Icon,
   NotebookPenIcon,
@@ -114,6 +114,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
                       </span>
                     ) : null}
                   </Link>
+                  {/* <PlusIcon className="size-4" /> */}
                 </SidebarMenuButton>
               </SidebarMenuItem>
             );
