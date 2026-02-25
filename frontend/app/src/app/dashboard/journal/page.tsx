@@ -206,8 +206,9 @@ export default function JournalPage() {
   }, [snapshot, title]);
 
   return (
-    <div className="">
-      <div className="max-w-4xl mx-auto flex flex-col justify-center gap-4 outline-1  sm:min-h-300 h-80 bg-white text-black p-6">
+    <div >
+      <button className="relative flex items-center justify-center gap-3 rounded-[14px] bg-gradient-to-r from-blue-600 to-cyan-600  px-6 py-3 text-base font-semibold text-white disabled:opacity-60 cursor-pointer">New Note</button>
+      <div className="max-w-7xl mx-auto flex flex-col justify-center gap-4 outline-1  sm:min-h-150 h-80 bg-white text-black p-6">
         <input
           type="text"
           value={title}
@@ -224,7 +225,7 @@ export default function JournalPage() {
           type="button"
           onClick={handleOnSubmit}
           disabled={isSubmitting}
-          className="relative flex items-center justify-center gap-3 rounded-[14px] bg-gradient-to-r from-blue-600 to-cyan-600 w-50 h-23 px-6 py-3 text-base font-semibold text-white disabled:opacity-60"
+          className="relative flex items-center justify-center gap-3 rounded-[14px] bg-gradient-to-r from-blue-600 to-cyan-600  px-6 py-3 text-base font-semibold text-white disabled:opacity-60 cursor-pointer"
         >
           {isSubmitting ? "Saving..." : "Generate Signal"}
         </button>

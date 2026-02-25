@@ -4,7 +4,7 @@ import {
   JournalValidationError,
   validateJournalUpdatePayload,
 } from "@/lib/journal/validation";
-import type { JournalEntryRecord } from "@/lib/journal/types";
+import type { JournalEntryRecord } from "@/lib/journal/journalSchema";
 import { createClient } from "@/lib/supabase/server";
 
 const TABLE = "journal_entries";
@@ -36,7 +36,7 @@ async function getUserContext() {
   return { supabase, user, error };
 }
 
-export async function GET(
+export async function fetchJournal(
   _request: Request,
   { params }: { params: { id: string } },
 ) {
@@ -73,7 +73,7 @@ export async function GET(
   return NextResponse.json(data as JournalEntryRecord);
 }
 
-export async function PUT(
+export async function updateJournal(
   request: Request,
   { params }: { params: { id: string } },
 ) {

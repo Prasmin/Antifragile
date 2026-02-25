@@ -1,4 +1,4 @@
-import type { JournalEntryInput, JournalEntryUpdateInput } from "./types";
+import type { JournalEntryInput, JournalEntryUpdateInput } from "./journalSchema";
 
 export const JOURNAL_TITLE_MAX_LENGTH = 160;
 export const JOURNAL_CONTENT_MAX_LENGTH = 20000;

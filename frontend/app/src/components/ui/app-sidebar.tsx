@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import {
   ActivityIcon,
-  PlusIcon,
+  
   GaugeIcon,
   Layers3Icon,
   NotebookPenIcon,
@@ -23,13 +23,17 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
 
   SidebarRail,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 
+
 interface NavItem {
-  title: string;
+  name: string;
   href: string;
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   description?: string;
@@ -38,25 +42,25 @@ interface NavItem {
 
 const primaryNav: NavItem[] = [
   {
-    title: "Overview",
+    name: "Overview",
     href: "/dashboard",
     icon: GaugeIcon,
     description: "Your daily snapshot",
   },
   {
-    title: "Barbell",
+    name: "Barbell",
     href: "/dashboard/barbell",
     icon: Layers3Icon,
     description: "Stress-test plans",
   },
   {
-    title: "Journal",
+    name: "Journal",
     href: "/dashboard/journal",
     icon: NotebookPenIcon,
     description: "Capture field notes",
   },
   {
-    title: "Via Negativa",
+    name: "Via Negativa",
     href: "/dashboard/vianegativa",
     icon: ActivityIcon,
     description: "Track avoidable risks",
@@ -67,6 +71,8 @@ const primaryNav: NavItem[] = [
 
 interface AppSidebarProps {
   user: User | null;
+  title?: string;
+  journalEntries?: { id: string; title: string }[];
 }
 
 
@@ -75,8 +81,10 @@ interface AppSidebarProps {
 
 
 <div className=".0"></div>
-export function AppSidebar({ user }: AppSidebarProps) {
+export function AppSidebar({ user, title, journalEntries = [] }: AppSidebarProps) {
   const pathname = usePathname();
+  const isJournalPage = pathname?.startsWith("/dashboard/journal") ?? false;
+  const journalTitle = title?.trim() || "Journal";
   const displayName =
     (user?.user_metadata?.full_name as string | undefined) ??
     user?.email ??
@@ -99,15 +107,15 @@ export function AppSidebar({ user }: AppSidebarProps) {
             const Icon = item.icon;
             const isActive = pathname === item.href;
             return (
-              <SidebarMenuItem key={item.title}>
+              <SidebarMenuItem key={item.name}>
                 <SidebarMenuButton
                   asChild
                   isActive={isActive}
-                  tooltip={item.description ?? item.title}
+                  tooltip={item.description ?? item.name}
                 >
-                  <Link href={item.href} aria-label={item.title}>
+                  <Link href={item.href} aria-label={item.name}>
                     <Icon className="size-4" />
-                    <span>{item.title}</span>
+                    <span>{item.name}</span>
                     {item.badge ? (
                       <span className="ml-auto rounded-full bg-white/10 px-2 text-xs uppercase tracking-wide text-white/80">
                         {item.badge}
@@ -116,6 +124,20 @@ export function AppSidebar({ user }: AppSidebarProps) {
                   </Link>
                   {/* <PlusIcon className="size-4" /> */}
                 </SidebarMenuButton>
+                {item.name === "Journal" && (isJournalPage || journalEntries.length) ? (
+                  <SidebarMenuSub>
+                    
+                    {journalEntries.map((entry) => (
+                      <SidebarMenuSubItem key={entry.id}>
+                        <SidebarMenuSubButton size="sm">
+                          <span className="truncate text-black/70">
+                            {entry.title?.trim() || "Untitled"}
+                          </span>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    ))}
+                  </SidebarMenuSub>
+                ) : null}
               </SidebarMenuItem>
             );
           })}
@@ -126,6 +148,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
 
   return (
     <>
+    
       <Sidebar
         collapsible="icon"
         className="bg-slate-900/80 text-black backdrop-blur "
@@ -139,6 +162,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
             Learn better, think deeper, grow stronger.
           </p>
         </SidebarHeader>
+       
         <SidebarContent>
           {renderNavSection("Tools", primaryNav)}
           <SidebarSeparator className="border-white/10" />
@@ -146,6 +170,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
         
           
         </SidebarContent>
+        
         <SidebarFooter className="border-t border-white/5">
           <div className="flex items-center gap-3 rounded-md bg-white/5 px-2 py-3">
             <div className="flex size-8 items-center justify-center rounded-md bg-white/10 text-sm font-medium uppercase text-white">
@@ -163,6 +188,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
         </SidebarFooter>
       </Sidebar>
       <SidebarRail />
+      
     </>
   );
 }
