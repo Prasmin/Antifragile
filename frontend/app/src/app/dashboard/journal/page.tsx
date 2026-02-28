@@ -207,7 +207,12 @@ export default function JournalPage() {
 
   return (
     <div >
+      <div className="flex justify-between mx-auto">
+
       <button className="relative flex items-center justify-center gap-3 rounded-[14px] bg-gradient-to-r from-blue-600 to-cyan-600  px-6 py-3 text-base font-semibold text-white disabled:opacity-60 cursor-pointer">New Note</button>
+      <button className="relative flex items-center justify-center gap-3 rounded-[14px] bg-red-600   px-6 py-3 text-base font-semibold text-white disabled:opacity-60 cursor-pointer">Delete</button>
+
+      </div>
       <div className="max-w-7xl mx-auto flex flex-col justify-center gap-4 outline-1  sm:min-h-150 h-80 bg-white text-black p-6">
         <input
           type="text"

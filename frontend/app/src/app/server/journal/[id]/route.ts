@@ -5,6 +5,7 @@ import {
   validateJournalUpdatePayload,
 } from "@/lib/journal/validation";
 import type { JournalEntryRecord } from "@/lib/journal/journalSchema";
+import { decryptContent, type EncryptedContent } from "@/lib/crypto/encryption";
 import { createClient } from "@/lib/supabase/server";
 
 const TABLE = "journal_entries";
@@ -18,10 +19,44 @@ const sessionErrorResponse = () =>
 const notFoundResponse = () =>
   NextResponse.json({ error: "Journal entry not found" }, { status: 404 });
 
+const isEncryptedPayload = (value: unknown): value is EncryptedContent => {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const payload = value as Record<string, unknown>;
+
+  return (
+    typeof payload.ciphertext === "string" &&
+    typeof payload.iv === "string" &&
+    typeof payload.authTag === "string"
+  );
+};
+
+const tryDecryptContent = (rawContent: string): string => {
+  try {
+    const parsed = JSON.parse(rawContent);
+
+    if (isEncryptedPayload(parsed)) {
+      return decryptContent(parsed as EncryptedContent);
+    }
+
+    return rawContent;
+  } catch (error) {
+    console.error("Failed to decrypt journal content", error);
+    return rawContent;
+  }
+};
+
+const toDecryptedRecord = (record: JournalEntryRecord): JournalEntryRecord => ({
+  ...record,
+  content: tryDecryptContent(record.content),
+});
+
 const parseJson = async (request: Request) => {
   try {
     return await request.json();
-  } catch  {
+  } catch {
     throw new JournalValidationError("Body must be valid JSON");
   }
 };
@@ -36,13 +71,13 @@ async function getUserContext() {
   return { supabase, user, error };
 }
 
-export async function fetchJournal(
+export async function GET(
   _request: Request,
   { params }: { params: { id: string } },
 ) {
-  const { supabase, user } = await getUserContext();
+  const { supabase, user, error: authError } = await getUserContext();
 
-  if (!user) {
+  if (authError) {
     return sessionErrorResponse();
   }
 
@@ -54,7 +89,7 @@ export async function fetchJournal(
 
   const { data, error } = await supabase
     .from(TABLE)
-    .select("id,title,content,created_at,updated_at")
+    .select("id,user_id,title,content,created_at,updated_at")
     .eq("user_id", userId)
     .eq("id", params.id)
     .maybeSingle();
@@ -70,10 +105,10 @@ export async function fetchJournal(
     return notFoundResponse();
   }
 
-  return NextResponse.json(data as JournalEntryRecord);
+  return NextResponse.json(toDecryptedRecord(data as JournalEntryRecord));
 }
 
-export async function updateJournal(
+export async function PATCH(
   request: Request,
   { params }: { params: { id: string } },
 ) {

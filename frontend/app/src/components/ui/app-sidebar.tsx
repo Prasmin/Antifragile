@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import {
   ActivityIcon,
@@ -81,10 +81,12 @@ interface AppSidebarProps {
 
 
 <div className=".0"></div>
-export function AppSidebar({ user, title, journalEntries = [] }: AppSidebarProps) {
+export function AppSidebar({ user, journalEntries = [] }: AppSidebarProps) {
   const pathname = usePathname();
+  
   const isJournalPage = pathname?.startsWith("/dashboard/journal") ?? false;
-  const journalTitle = title?.trim() || "Journal";
+  const router = useRouter()
+
   const displayName =
     (user?.user_metadata?.full_name as string | undefined) ??
     user?.email ??
@@ -130,9 +132,11 @@ export function AppSidebar({ user, title, journalEntries = [] }: AppSidebarProps
                     {journalEntries.map((entry) => (
                       <SidebarMenuSubItem key={entry.id}>
                         <SidebarMenuSubButton size="sm">
-                          <span className="truncate text-black/70">
+                          <span className="truncate text-black/70 cursor-pointer hover:text-black" onClick={() => router.push(`/dashboard/journal/${entry.id}`)}>
                             {entry.title?.trim() || "Untitled"}
+                            
                           </span>
+                          
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     ))}
