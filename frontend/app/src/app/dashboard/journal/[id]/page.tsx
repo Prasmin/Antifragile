@@ -1,9 +1,10 @@
 import type { JSONContent } from "@tiptap/core";
 import { notFound, redirect } from "next/navigation";
 
-import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
 import { decryptContent, type EncryptedContent } from "@/lib/crypto/encryption";
 import { createClient } from "@/lib/supabase/server";
+import { JournalEntryEditor } from "@/components/Journal/journal-entry-editor";
+import { JournalDetailActions } from "@/components/Journal/journal-detail-actions";
 
 const TABLE = "journal_entries";
 
@@ -108,11 +109,9 @@ export default async function JournalDetailPage({
           </p>
         </div>
       </div>
+      <JournalDetailActions currentEntryId={entry.id} />
 
-      <div className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-4 text-black shadow-sm">
-        <h1 className="text-2xl font-semibold tracking-tight">{entry.title}</h1>
-        <SimpleEditor initialContent={entry.editorContent ?? undefined} />
-      </div>
+      <JournalEntryEditor entry={entry} />
     </div>
   );
 }
