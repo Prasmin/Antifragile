@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useState, useTransition } from "react";
+import { Profiler, useCallback, useState, useTransition } from "react";
+import type { ProfilerOnRenderCallback } from "react";
 import { useRouter } from "next/navigation";
 import type { JSONContent } from "@tiptap/core";
 
@@ -20,6 +21,8 @@ const EMPTY_NOTE_CONTENT: JSONContent = {
 };
 
 const DEFAULT_TITLE = "Untitled Entry";
+const PROFILER_ID = "journal-detail-actions";
+const PROFILER_ENABLED = process.env.NODE_ENV !== "production";
 
 type JournalDetailActionsProps = {
   currentEntryId: string;
@@ -31,6 +34,18 @@ export function JournalDetailActions({
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const handleProfilerRender = useCallback<ProfilerOnRenderCallback>(
+    (id, phase, actualDuration, baseDuration, startTime, commitTime) => {
+      if (!PROFILER_ENABLED) {
+        return;
+      }
+
+      console.info(
+        `[Profiler:${id}] phase=${phase} actual=${actualDuration.toFixed(2)}ms base=${baseDuration.toFixed(2)}ms start=${startTime.toFixed(2)}ms commit=${commitTime.toFixed(2)}ms`,
+      );
+    },
+    [],
+  );
 
   const handleCreate = useCallback(() => {
     setError(null);
@@ -64,9 +79,11 @@ export function JournalDetailActions({
     setError(null);
     startTransition(async () => {
       try {
+        console.log("Deleting:", currentEntryId);
         await deleteJournalEntry(currentEntryId);
+        console.log("Deleted");
         router.push("/dashboard/journal");
-        router.refresh();
+        
       } catch (error) {
         setError(
           error instanceof Error
@@ -77,7 +94,7 @@ export function JournalDetailActions({
     });
   }, [currentEntryId, router]);
 
-  return (
+  const content = (
     <div className="flex flex-col gap-2">
       <div className="flex justify-between">
         <button
@@ -104,5 +121,15 @@ export function JournalDetailActions({
         </p>
       ) : null}
     </div>
+  );
+
+  if (!PROFILER_ENABLED) {
+    return content;
+  }
+
+  return (
+    <Profiler id={PROFILER_ID} onRender={handleProfilerRender}>
+      {content}
+    </Profiler>
   );
 }
