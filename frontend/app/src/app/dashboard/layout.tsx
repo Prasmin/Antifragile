@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/sidebar";
 import { createClient } from "@/lib/supabase/server";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { JournalProvider } from "@/context/journal-context";
 
 const EBGaramondSerif = EB_Garamond({
   variable: "--font-eb-garamond",
@@ -60,21 +61,27 @@ export default async function RootLayout({
       <body
         className={`${geistMono.variable} ${EBGaramondSerif.variable} antialiased  min-h-screen flex flex-col `}
       >
-        <SidebarProvider className="flex-1" defaultOpen>
-          <AppSidebar user={user} title={journalTitle} journalEntries={journalEntries} />
-          <SidebarInset>
-            <div className="flex flex-1 flex-col">
-              <div className="border-b border-white/10 px-4 py-3 md:hidden">
-                <SidebarTrigger className="text-black" />
+        <JournalProvider>
+          <SidebarProvider className="flex-1" defaultOpen>
+            <AppSidebar
+              user={user}
+              title={journalTitle}
+              journalEntries={journalEntries}
+            />
+            <SidebarInset>
+              <div className="flex flex-1 flex-col">
+                <div className="border-b border-white/10 px-4 py-3 md:hidden">
+                  <SidebarTrigger className="text-black" />
+                </div>
+                <main className="flex-1 px-4 py-6 lg:px-8">
+                  <section className="mt-8">
+                    <TooltipProvider>{children}</TooltipProvider>
+                  </section>
+                </main>
               </div>
-              <main className="flex-1 px-4 py-6 lg:px-8">
-                <section className="mt-8">
-                  <TooltipProvider>{children}</TooltipProvider>
-                </section>
-              </main>
-            </div>
-          </SidebarInset>
-        </SidebarProvider>
+            </SidebarInset>
+          </SidebarProvider>
+        </JournalProvider>
       </body>
     </html>
   );

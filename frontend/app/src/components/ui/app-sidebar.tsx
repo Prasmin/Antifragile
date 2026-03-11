@@ -6,12 +6,12 @@ import { usePathname, useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import {
   ActivityIcon,
-  
   GaugeIcon,
   Layers3Icon,
   NotebookPenIcon,
 } from "lucide-react";
 
+import { useJournal } from "@/context/journal-context";
 import {
   Sidebar,
   SidebarContent,
@@ -26,11 +26,9 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-
   SidebarRail,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-
 
 interface NavItem {
   name: string;
@@ -67,25 +65,19 @@ const primaryNav: NavItem[] = [
   },
 ];
 
-
-
 interface AppSidebarProps {
   user: User | null;
   title?: string;
   journalEntries?: { id: string; title: string }[];
 }
 
-
-
-
-
-
-<div className=".0"></div>
+<div className=".0"></div>;
 export function AppSidebar({ user, journalEntries = [] }: AppSidebarProps) {
   const pathname = usePathname();
-  
+
   const isJournalPage = pathname?.startsWith("/dashboard/journal") ?? false;
-  const router = useRouter()
+  const router = useRouter();
+  const { deletingEntryId } = useJournal();
 
   const displayName =
     (user?.user_metadata?.full_name as string | undefined) ??
@@ -126,20 +118,32 @@ export function AppSidebar({ user, journalEntries = [] }: AppSidebarProps) {
                   </Link>
                   {/* <PlusIcon className="size-4" /> */}
                 </SidebarMenuButton>
-                {item.name === "Journal" && (isJournalPage || journalEntries.length) ? (
+                {item.name === "Journal" &&
+                (isJournalPage || journalEntries.length) ? (
                   <SidebarMenuSub>
-                    
-                    {journalEntries.map((entry) => (
-                      <SidebarMenuSubItem key={entry.id}>
-                        <SidebarMenuSubButton size="sm">
-                          <span className="truncate text-black/70 cursor-pointer hover:text-black" onClick={() => router.push(`/dashboard/journal/${entry.id}`)}>
-                            {entry.title?.trim() || "Untitled"}
-                            
-                          </span>
-                          
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    ))}
+                    {journalEntries.map((entry) => {
+                      const isDeleting = deletingEntryId === entry.id;
+                      return (
+                        <SidebarMenuSubItem key={entry.id}>
+                          <SidebarMenuSubButton size="sm">
+                            <span
+                              className={`truncate cursor-pointer ${
+                                isDeleting
+                                  ? "line-through text-red-400 opacity-50 pointer-events-none"
+                                  : "text-black/70 hover:text-black"
+                              }`}
+                              onClick={() =>
+                                router.push(`/dashboard/journal/${entry.id}`)
+                              }
+                            >
+                              {isDeleting
+                                ? "Deleting…"
+                                : entry.title?.trim() || "Untitled"}
+                            </span>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      );
+                    })}
                   </SidebarMenuSub>
                 ) : null}
               </SidebarMenuItem>
@@ -152,7 +156,6 @@ export function AppSidebar({ user, journalEntries = [] }: AppSidebarProps) {
 
   return (
     <>
-    
       <Sidebar
         collapsible="icon"
         className="bg-slate-900/80 text-black backdrop-blur "
@@ -166,15 +169,12 @@ export function AppSidebar({ user, journalEntries = [] }: AppSidebarProps) {
             Learn better, think deeper, grow stronger.
           </p>
         </SidebarHeader>
-       
+
         <SidebarContent>
           {renderNavSection("Tools", primaryNav)}
           <SidebarSeparator className="border-white/10" />
-        
-        
-          
         </SidebarContent>
-        
+
         <SidebarFooter className="border-t border-white/5">
           <div className="flex items-center gap-3 rounded-md bg-white/5 px-2 py-3">
             <div className="flex size-8 items-center justify-center rounded-md bg-white/10 text-sm font-medium uppercase text-white">
@@ -192,7 +192,6 @@ export function AppSidebar({ user, journalEntries = [] }: AppSidebarProps) {
         </SidebarFooter>
       </Sidebar>
       <SidebarRail />
-      
     </>
   );
 }

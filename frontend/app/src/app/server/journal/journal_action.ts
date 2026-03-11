@@ -18,6 +18,7 @@ import {
   type EncryptedContent,
 } from "@/lib/crypto/encryption";
 import { createClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
 
 const TABLE = "journal_entries";
 // const DEFAULT_LIMIT = 20;
@@ -264,4 +265,6 @@ export async function deleteJournalEntry(id: string): Promise<void> {
   if (!count) {
     throw new Error("Journal entry not found");
   }
+
+  revalidatePath("/dashboard/journal");
 }

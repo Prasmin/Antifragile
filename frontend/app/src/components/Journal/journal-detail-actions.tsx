@@ -3,24 +3,9 @@
 import { Profiler, useCallback, useState, useTransition } from "react";
 import type { ProfilerOnRenderCallback } from "react";
 import { useRouter } from "next/navigation";
-import type { JSONContent } from "@tiptap/core";
+import { deleteJournalEntry } from "@/app/server/journal/journal_action";
+import { useJournal } from "@/context/journal-context";
 
-import {
-  createJournalEntry,
-  deleteJournalEntry,
-} from "@/app/server/journal/journal_action";
-
-const EMPTY_NOTE_CONTENT: JSONContent = {
-  type: "doc",
-  content: [
-    {
-      type: "paragraph",
-      content: [],
-    },
-  ],
-};
-
-const DEFAULT_TITLE = "Untitled Entry";
 const PROFILER_ID = "journal-detail-actions";
 const PROFILER_ENABLED = process.env.NODE_ENV !== "production";
 
@@ -34,6 +19,7 @@ export function JournalDetailActions({
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const { setDeletingEntryId } = useJournal();
   const handleProfilerRender = useCallback<ProfilerOnRenderCallback>(
     (id, phase, actualDuration, baseDuration, startTime, commitTime) => {
       if (!PROFILER_ENABLED) {
@@ -48,23 +34,7 @@ export function JournalDetailActions({
   );
 
   const handleCreate = useCallback(() => {
-    setError(null);
-    startTransition(async () => {
-      try {
-        const entry = await createJournalEntry({
-          title: DEFAULT_TITLE,
-          content: JSON.stringify(EMPTY_NOTE_CONTENT),
-        });
-
-        router.push(`/dashboard/journal/${entry.id}`);
-      } catch (error) {
-        setError(
-          error instanceof Error
-            ? error.message
-            : "Failed to create a new journal entry",
-        );
-      }
-    });
+    router.push("/dashboard/journal");
   }, [router]);
 
   const handleDelete = useCallback(() => {
@@ -77,14 +47,16 @@ export function JournalDetailActions({
     }
 
     setError(null);
+    setDeletingEntryId(currentEntryId);
     startTransition(async () => {
       try {
         console.log("Deleting:", currentEntryId);
         await deleteJournalEntry(currentEntryId);
         console.log("Deleted");
+        setDeletingEntryId(null);
         router.push("/dashboard/journal");
-        
       } catch (error) {
+        setDeletingEntryId(null);
         setError(
           error instanceof Error
             ? error.message
@@ -92,7 +64,7 @@ export function JournalDetailActions({
         );
       }
     });
-  }, [currentEntryId, router]);
+  }, [currentEntryId, router, setDeletingEntryId]);
 
   const content = (
     <div className="flex flex-col gap-2">
