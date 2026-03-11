@@ -31,7 +31,7 @@ const Navbar = () => {
 
               <div className="hidden sm:block">
                 {navbarItems.map((item) => (
-                  <Link href={item.path} key={item.id} className="mx-4">
+                  <Link href={item.path} key={item.id} className="mx-4 text-white hover:text-gray-300 transition-colors duration-300">
                     {item.title}
                   </Link>
                 ))}
