@@ -4,8 +4,6 @@ import "../../app/globals.css";
 import Navbar from "@/components/Navbar/page";
 import Footer from "@/components/footer";
 
-
-
 const EBGaramondSerif = EB_Garamond({
   variable: "--font-eb-garamond",
   subsets: ["latin"],
@@ -30,15 +28,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistMono.variable} ${EBGaramondSerif.variable}  min-h-screen antialiased bg-background  `}
+        className={`${geistMono.variable} ${EBGaramondSerif.variable}  min-h-screen antialiased bg-background flex flex-col`}
       >
-      
-      <Navbar />
-       
-       <main >{children}</main>
+        <Navbar />
 
-        <Footer/>
-      
+        <main className="flex-1">{children}</main>
+
+        <Footer />
       </body>
     </html>
   );
