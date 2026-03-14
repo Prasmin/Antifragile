@@ -50,7 +50,7 @@ export default function GoogleLoginDemo({ user }: GoogleLoginDemoProps) {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-[#020817] via-[#0f172a] to-[#1e293b]">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden ">
       {/* Animated Background Effects */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-1/4 top-1/4 h-96 w-96 animate-pulse rounded-full bg-blue-500/10 blur-3xl" />
