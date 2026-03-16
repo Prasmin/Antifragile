@@ -24,9 +24,15 @@ const navbarItems: Menu[] = [
     current: false,
   },
   {
-    id: 5, 
-    title: "features",
-    path: "/features",
+    id: 3, 
+    title: "Blog",
+    path: "/blog",
+    current: false,
+  },
+  {
+    id: 4, 
+    title: "Contact",
+    path: "/contact",
     current: false,
   },
 ]
