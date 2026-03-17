@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import {  MapPin, CheckCircle, ArrowRight } from "lucide-react";
+import { MapPin, CheckCircle, ArrowRight } from "lucide-react";
+import { TurnstileWidget } from "@/components/Turnstile/Turnstile";
+import { submitContactForm } from "@/app/server/contact/actions";
 
 type FormData = {
   name: string;
@@ -12,7 +14,6 @@ type FormData = {
 };
 
 const contactInfo = [
- 
   {
     icon: <MapPin className="size-5" />,
     label: "Location",
@@ -23,6 +24,8 @@ const contactInfo = [
 
 const Contact = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const {
     register,
@@ -32,11 +35,24 @@ const Contact = () => {
   } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
-    // TODO: wire to server action / backend endpoint
-    await new Promise((r) => setTimeout(r, 1200));
-    console.log("Contact form data:", data);
+    if (!turnstileToken) {
+      setServerError("Please complete the human verification challenge.");
+      return;
+    }
+    setServerError(null);
+
+    const result = await submitContactForm({ ...data, turnstileToken });
+
+    if (!result.success) {
+      setServerError(result.error);
+      // Reset the Turnstile widget so the user can retry
+      setTurnstileToken(null);
+      return;
+    }
+
     setSubmitted(true);
     reset();
+    setTurnstileToken(null);
     setTimeout(() => setSubmitted(false), 5000);
   };
 
@@ -92,9 +108,6 @@ const Contact = () => {
               </div>
             </div>
           ))}
-
-         
-          
         </div>
 
         {/* ── right column — form ── */}
@@ -235,6 +248,23 @@ const Contact = () => {
                     <p className="mt-1.5 text-xs text-red-400">
                       {errors.message.message}
                     </p>
+                  )}
+                </div>
+
+                {/* ── Turnstile ── */}
+                <div>
+                  <TurnstileWidget
+                    onSuccess={setTurnstileToken}
+                    onExpire={() => setTurnstileToken(null)}
+                    onError={() => {
+                      setTurnstileToken(null);
+                      setServerError(
+                        "Verification error. Please refresh and try again.",
+                      );
+                    }}
+                  />
+                  {serverError && (
+                    <p className="mt-2 text-xs text-red-400">{serverError}</p>
                   )}
                 </div>
 
