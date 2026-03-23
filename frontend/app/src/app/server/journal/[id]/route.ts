@@ -73,8 +73,9 @@ async function getUserContext() {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const { supabase, user, error: authError } = await getUserContext();
 
   if (authError) {
@@ -91,7 +92,7 @@ export async function GET(
     .from(TABLE)
     .select("id,user_id,title,content,created_at,updated_at")
     .eq("user_id", userId)
-    .eq("id", params.id)
+    .eq("id", id)
     .maybeSingle();
 
   if (error) {
@@ -110,8 +111,9 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const { supabase, user } = await getUserContext();
 
   if (!user) {
@@ -134,7 +136,7 @@ export async function PATCH(
         ...payload,
         updated_at: new Date().toISOString(),
       })
-      .eq("id", params.id)
+      .eq("id", id)
       .eq("user_id", userId)
       .select("id,title,content,created_at,updated_at")
       .maybeSingle();
@@ -165,8 +167,9 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const { supabase, user } = await getUserContext();
 
   if (!user) {
@@ -182,7 +185,7 @@ export async function DELETE(
   const { error, count } = await supabase
     .from(TABLE)
     .delete({ count: "exact" })
-    .eq("id", params.id)
+    .eq("id", id)
     .eq("user_id", userId);
 
   if (error) {

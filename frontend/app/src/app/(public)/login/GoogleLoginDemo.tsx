@@ -3,6 +3,7 @@
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 type GoogleLoginDemoProps = {
   user: User | null;
@@ -11,27 +12,29 @@ type GoogleLoginDemoProps = {
 export default function GoogleLoginDemo({ user }: GoogleLoginDemoProps) {
   const supabase = getSupabaseBrowserClient();
   const [currentUser, setCurrentUser] = useState<User | null>(user);
-
+  const router = useRouter();
 
   async function handleSignOut() {
     await supabase.auth.signOut();
-   
   }
 
   useEffect(() => {
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
-        setCurrentUser(session?.user ?? null);
+        if (session?.user) {
+          router.push("/dashboard");
+        } else {
+          setCurrentUser(null);
+        }
       },
     );
-    
 
     return () => {
       listener?.subscription.unsubscribe();
     };
-  }, [supabase]);
+  }, [router, supabase]);
 
-  async function handleGoogleLogin() {
+  async function handleGoogleLogin() {  
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
