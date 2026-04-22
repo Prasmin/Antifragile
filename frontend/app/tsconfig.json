@@ -12,8 +12,9 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-     "types": ["vitest/globals"],
+    "types": ["vitest/globals"],
     "incremental": true,
+    "ignoreDeprecations": "6.0",
     "plugins": [
       {
         "name": "next"
@@ -23,7 +24,7 @@
     "paths": {
       "@/*": ["./src/*"]
     }
-  },  
+  },
   "include": [
     "next-env.d.ts",
     "**/*.ts",

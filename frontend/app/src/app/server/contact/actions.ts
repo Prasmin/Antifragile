@@ -66,8 +66,6 @@ export async function submitContactForm(
     };
   }
 
-  // TODO: send email / store in DB here
-  console.log("Contact form submission:", { name, email, subject });
 
   return { success: true };
 }
