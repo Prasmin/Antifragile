@@ -8,8 +8,11 @@ import {
   ActivityIcon,
   GaugeIcon,
   Layers3Icon,
+  LogOutIcon,
   NotebookPenIcon,
 } from "lucide-react";
+
+import { signOut } from "@/app/auth/actions";
 
 import { useJournal } from "@/context/journal-context";
 import {
@@ -189,6 +192,15 @@ export function AppSidebar({ user, journalEntries = [] }: AppSidebarProps) {
               </span>
             </div>
           </div>
+          <form action={signOut}>
+            <button
+              type="submit"
+              className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm text-black/60 hover:bg-white/5 hover:text-black/80 transition-colors"
+            >
+              <LogOutIcon className="size-4" />
+              <span>Sign out</span>
+            </button>
+          </form>
         </SidebarFooter>
       </Sidebar>
       <SidebarRail />

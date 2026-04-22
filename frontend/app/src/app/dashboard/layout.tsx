@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { EB_Garamond, Geist_Mono } from "next/font/google";
-import "../../app/globals.css";
+import "../globals.css"; 
 
 import { AppSidebar } from "@/components/ui/app-sidebar";
 import {
@@ -59,7 +59,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistMono.variable} ${EBGaramondSerif.variable} antialiased  min-h-screen flex flex-col `}
+        className={`${geistMono.variable} ${EBGaramondSerif.variable} antialiased min-h-screen flex flex-col`}
       >
         <JournalProvider>
           <SidebarProvider className="flex-1" defaultOpen>
