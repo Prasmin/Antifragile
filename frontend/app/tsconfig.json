@@ -14,13 +14,12 @@
     "jsx": "react-jsx",
     "types": ["vitest/globals"],
     "incremental": true,
-    "ignoreDeprecations": "6.0",
+    "ignoreDeprecations": "5.0",
     "plugins": [
       {
         "name": "next"
       }
     ],
-     "baseUrl": "./",
     "paths": {
       "@/*": ["./src/*"]
     }
