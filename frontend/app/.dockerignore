@@ -16,6 +16,9 @@ cypress/
 cypress/screenshots/
 cypress/videos/
 reports/
+tests/
+e2e/
+playwright-report/
 
 # Ignore environment and config files (sensitive data)
 *.env*

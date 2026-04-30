@@ -1,10 +1,6 @@
 # =========================================
 # Stage 1: Build the Next.js Application
 # =========================================
-
-# ARG declares a build-time variable. It can be overridden with:
-#   docker build --build-arg NODE_VERSION=22.0.0-alpine3.21 .
-# Using Alpine keeps the image small (~50 MB vs ~200 MB for Debian slim).
 ARG NODE_VERSION=22.14.0-alpine3.21
 
 # Build-time args for NEXT_PUBLIC_ variables — these must be available
@@ -104,7 +100,7 @@ ENV HOSTNAME="0.0.0.0"
 # how to test whether the container is healthy and ready for traffic.
 # --start-period gives the app time to boot before checks begin.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD wget -qO- http://localhost:3000/ || exit 1
+    CMD wget -qO- http://localhost:3000/api/health || exit 1
 
 # CMD defines the default process to run when the container starts.
 # Use the exec form (JSON array) — it runs the process directly without a

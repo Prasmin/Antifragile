@@ -1,0 +1,26 @@
+# Development override — use with:
+#   docker compose -f compose.yaml -f compose.dev.yaml up
+#
+# This file overrides the production compose.yaml for local development:
+#   - Replaces the production image with a dev build target
+#   - Mounts source code so changes reflect without rebuilding
+#   - Switches NODE_ENV to development for hot reload
+#   - Removes resource limits that can slow dev machines
+
+services:
+  web:
+    image: antifragile-web:dev
+    build:
+      target: builder
+    command: pnpm dev
+    environment:
+      NODE_ENV: development
+    volumes:
+      # Bind-mount source so edits are visible inside the container instantly.
+      - .:/app
+      # Preserve the container's node_modules — do NOT overlay with host copy.
+      - /app/node_modules
+      # Preserve the pnpm store cache between restarts.
+      - /app/.pnpm-store
+    deploy:
+      resources: {}

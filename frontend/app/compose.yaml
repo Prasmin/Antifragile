@@ -14,9 +14,9 @@ services:
       # Pass NEXT_PUBLIC_ vars as build args so Next.js can inline them
       # into the client bundle during `next build`.
       args:
-        - NEXT_PUBLIC_SUPABASE_URL
-        - NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-        - NEXT_PUBLIC_TURNSTILE_SITE_KEY
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY}
+        NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY}
 
     # restart: unless-stopped — restarts after crashes or host reboots,
     # but respects an intentional "docker compose stop".
@@ -40,7 +40,7 @@ services:
     # healthcheck mirrors what the Dockerfile declares so Compose can
     # gate dependent services on actual readiness, not just process start.
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
       interval: 30s
       timeout: 5s
       start_period: 10s
