@@ -4,7 +4,7 @@ services:
   web:
     # image: names the built image so it can be pushed to a registry later.
     # Without this Docker assigns a random hash that changes every build.
-    image: antifragile-web:latest
+    image: prasmin/antifragile-web:latest
 
     build:
       # context: the directory Docker sends to the daemon as the build context.

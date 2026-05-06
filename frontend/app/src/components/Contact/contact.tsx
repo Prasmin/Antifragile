@@ -112,182 +112,182 @@ const Contact = () => {
 
         {/* ── right column — form ── */}
         <div className="lg:col-span-3">
-          <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-slate-900/90 to-slate-950/90 p-8 sm:p-10 shadow-2xl backdrop-blur-xl">
-            {submitted ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="relative rounded-2xl border border-white/10 bg-gradient-to-b from-slate-900/90 to-slate-950/90 p-8 sm:p-10 shadow-2xl backdrop-blur-xl">
+            {submitted && (
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-2xl bg-slate-950/85 px-8 text-center backdrop-blur-sm">
                 <div className="mb-5 flex size-16 items-center justify-center rounded-full bg-emerald-500/10">
                   <CheckCircle className="size-8 text-emerald-400" />
                 </div>
-                <h3 className="text-2xl font-bold mb-2">Message Sent!</h3>
-                <p className="text-white/60 max-w-sm">
+                <h3 className="mb-2 text-2xl font-bold">Message Sent!</h3>
+                <p className="max-w-sm text-white/60">
                   Thanks for reaching out. We&rsquo;ll get back to you within 24
                   hours.
                 </p>
               </div>
-            ) : (
-              <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="space-y-6"
-                noValidate
-              >
-                {/* ── row: name + email ── */}
-                <div className="grid sm:grid-cols-2 gap-5">
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="mb-1.5 block text-sm font-medium text-white/70"
-                    >
-                      Name
-                    </label>
-                    <input
-                      id="name"
-                      type="text"
-                      placeholder="Your name"
-                      aria-invalid={!!errors.name}
-                      className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none transition-all focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 aria-[invalid=true]:border-red-500/50 aria-[invalid=true]:ring-red-500/20"
-                      {...register("name", {
-                        required: "Name is required",
-                        maxLength: {
-                          value: 100,
-                          message: "Name must be under 100 characters",
-                        },
-                      })}
-                    />
-                    {errors.name && (
-                      <p className="mt-1.5 text-xs text-red-400">
-                        {errors.name.message}
-                      </p>
-                    )}
-                  </div>
+            )}
 
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className="mb-1.5 block text-sm font-medium text-white/70"
-                    >
-                      Email
-                    </label>
-                    <input
-                      id="email"
-                      type="email"
-                      placeholder="you@example.com"
-                      aria-invalid={!!errors.email}
-                      className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none transition-all focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 aria-[invalid=true]:border-red-500/50 aria-[invalid=true]:ring-red-500/20"
-                      {...register("email", {
-                        required: "Email is required",
-                        pattern: {
-                          value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                          message: "Enter a valid email address",
-                        },
-                      })}
-                    />
-                    {errors.email && (
-                      <p className="mt-1.5 text-xs text-red-400">
-                        {errors.email.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* ── subject ── */}
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-6"
+              noValidate
+            >
+              {/* ── row: name + email ── */}
+              <div className="grid sm:grid-cols-2 gap-5">
                 <div>
                   <label
-                    htmlFor="subject"
+                    htmlFor="name"
                     className="mb-1.5 block text-sm font-medium text-white/70"
                   >
-                    Subject
+                    Name
                   </label>
                   <input
-                    id="subject"
+                    id="name"
                     type="text"
-                    placeholder="What's this about?"
-                    aria-invalid={!!errors.subject}
+                    placeholder="Your name"
+                    aria-invalid={!!errors.name}
                     className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none transition-all focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 aria-[invalid=true]:border-red-500/50 aria-[invalid=true]:ring-red-500/20"
-                    {...register("subject", {
-                      required: "Subject is required",
+                    {...register("name", {
+                      required: "Name is required",
                       maxLength: {
-                        value: 200,
-                        message: "Subject must be under 200 characters",
+                        value: 100,
+                        message: "Name must be under 100 characters",
                       },
                     })}
                   />
-                  {errors.subject && (
+                  {errors.name && (
                     <p className="mt-1.5 text-xs text-red-400">
-                      {errors.subject.message}
+                      {errors.name.message}
                     </p>
                   )}
                 </div>
 
-                {/* ── message ── */}
                 <div>
                   <label
-                    htmlFor="message"
+                    htmlFor="email"
                     className="mb-1.5 block text-sm font-medium text-white/70"
                   >
-                    Message
+                    Email
                   </label>
-                  <textarea
-                    id="message"
-                    rows={5}
-                    placeholder="Tell us more…"
-                    aria-invalid={!!errors.message}
-                    className="w-full resize-none rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none transition-all focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 aria-[invalid=true]:border-red-500/50 aria-[invalid=true]:ring-red-500/20"
-                    {...register("message", {
-                      required: "Message is required",
-                      minLength: {
-                        value: 10,
-                        message: "Message must be at least 10 characters",
-                      },
-                      maxLength: {
-                        value: 5000,
-                        message: "Message must be under 5000 characters",
+                  <input
+                    id="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    aria-invalid={!!errors.email}
+                    className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none transition-all focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 aria-[invalid=true]:border-red-500/50 aria-[invalid=true]:ring-red-500/20"
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: {
+                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                        message: "Enter a valid email address",
                       },
                     })}
                   />
-                  {errors.message && (
+                  {errors.email && (
                     <p className="mt-1.5 text-xs text-red-400">
-                      {errors.message.message}
+                      {errors.email.message}
                     </p>
                   )}
                 </div>
+              </div>
 
-                {/* ── Turnstile ── */}
-                <div>
-                  <TurnstileWidget
-                    onSuccess={setTurnstileToken}
-                    onExpire={() => setTurnstileToken(null)}
-                    onError={() => {
-                      setTurnstileToken(null);
-                      setServerError(
-                        "Verification error. Please refresh and try again.",
-                      );
-                    }}
-                  />
-                  {serverError && (
-                    <p className="mt-2 text-xs text-red-400">{serverError}</p>
-                  )}
-                </div>
-
-                {/* ── submit ── */}
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="group relative cursor-pointer flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:bg-indigo-500 hover:shadow-indigo-500/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 disabled:opacity-60 disabled:pointer-events-none"
+              {/* ── subject ── */}
+              <div>
+                <label
+                  htmlFor="subject"
+                  className="mb-1.5 block text-sm font-medium text-white/70"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <span className="size-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                      Sending…
-                    </>
-                  ) : (
-                    <>
-                      Send Message
-                      <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-                    </>
-                  )}
-                </button>
-              </form>
-            )}
+                  Subject
+                </label>
+                <input
+                  id="subject"
+                  type="text"
+                  placeholder="What's this about?"
+                  aria-invalid={!!errors.subject}
+                  className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none transition-all focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 aria-[invalid=true]:border-red-500/50 aria-[invalid=true]:ring-red-500/20"
+                  {...register("subject", {
+                    required: "Subject is required",
+                    maxLength: {
+                      value: 200,
+                      message: "Subject must be under 200 characters",
+                    },
+                  })}
+                />
+                {errors.subject && (
+                  <p className="mt-1.5 text-xs text-red-400">
+                    {errors.subject.message}
+                  </p>
+                )}
+              </div>
+
+              {/* ── message ── */}
+              <div>
+                <label
+                  htmlFor="message"
+                  className="mb-1.5 block text-sm font-medium text-white/70"
+                >
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  rows={5}
+                  placeholder="Tell us more…"
+                  aria-invalid={!!errors.message}
+                  className="w-full resize-none rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none transition-all focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 aria-[invalid=true]:border-red-500/50 aria-[invalid=true]:ring-red-500/20"
+                  {...register("message", {
+                    required: "Message is required",
+                    minLength: {
+                      value: 10,
+                      message: "Message must be at least 10 characters",
+                    },
+                    maxLength: {
+                      value: 5000,
+                      message: "Message must be under 5000 characters",
+                    },
+                  })}
+                />
+                {errors.message && (
+                  <p className="mt-1.5 text-xs text-red-400">
+                    {errors.message.message}
+                  </p>
+                )}
+              </div>
+
+              {/* ── Turnstile ── */}
+              <div>
+                <TurnstileWidget
+                  onSuccess={setTurnstileToken}
+                  onExpire={() => setTurnstileToken(null)}
+                  onError={() => {
+                    setTurnstileToken(null);
+                    setServerError(
+                      "Verification error. Please refresh and try again.",
+                    );
+                  }}
+                />
+                {serverError && (
+                  <p className="mt-2 text-xs text-red-400">{serverError}</p>
+                )}
+              </div>
+
+              {/* ── submit ── */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="group relative cursor-pointer flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:bg-indigo-500 hover:shadow-indigo-500/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 disabled:opacity-60 disabled:pointer-events-none"
+              >
+                {isSubmitting ? (
+                  <>
+                    <span className="size-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    Sending…
+                  </>
+                ) : (
+                  <>
+                    Send Message
+                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                  </>
+                )}
+              </button>
+            </form>
           </div>
         </div>
       </div>
